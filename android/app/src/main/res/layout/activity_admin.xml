@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context=".views.activities.AdminActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/projectflix_admin"
+            android:textColor="@color/dark_red"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="24dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/movie_management"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"/>
+
+        <EditText
+            android:id="@+id/movieNameInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/movie_name"
+            android:textColorHint="@color/light_gray"
+            android:textColor="@android:color/white"
+            android:background="@color/gray"
+            android:padding="12dp"
+            android:layout_marginTop="8dp"/>
+
+        <EditText
+            android:id="@+id/movieDurationInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/duration_minutes"
+            android:inputType="number"
+            android:textColorHint="@color/light_gray"
+            android:textColor="@android:color/white"
+            android:background="@color/gray"
+            android:padding="12dp"
+            android:layout_marginTop="8dp"/>
+
+        <EditText
+            android:id="@+id/movieYearInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/year"
+            android:inputType="number"
+            android:textColorHint="@color/light_gray"
+            android:textColor="@android:color/white"
+            android:background="@color/gray"
+            android:padding="12dp"
+            android:layout_marginTop="8dp"/>
+
+        <EditText
+            android:id="@+id/movieDescriptionInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/description"
+            android:textColorHint="@color/light_gray"
+            android:textColor="@android:color/white"
+            android:background="@color/gray"
+            android:padding="12dp"
+            android:layout_marginTop="8dp"/>
+
+        <EditText
+            android:id="@+id/movieDirectorInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/director"
+            android:textColorHint="@color/light_gray"
+            android:textColor="@android:color/white"
+            android:background="@color/gray"
+            android:padding="12dp"
+            android:layout_marginTop="8dp"/>
+
+        <EditText
+            android:id="@+id/movieCastInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/cast"
+            android:textColorHint="@color/light_gray"
+            android:textColor="@android:color/white"
+            android:background="@color/gray"
+            android:padding="12dp"
+            android:layout_marginTop="8dp"/>
+
+        <EditText
+            android:id="@+id/movieImageInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/main_image_url"
+            android:textColorHint="@color/light_gray"
+            android:textColor="@android:color/white"
+            android:background="@color/gray"
+            android:padding="12dp"
+            android:layout_marginTop="8dp"/>
+
+        <EditText
+            android:id="@+id/movieTrailerInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/trailer_url"
+            android:textColorHint="@color/light_gray"
+            android:textColor="@android:color/white"
+            android:background="@color/gray"
+            android:padding="12dp"
+            android:layout_marginTop="8dp"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/categories"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"/>
+
+        <Button
+            android:id="@+id/showCategoriesButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/show_categories"
+            android:backgroundTint="@color/dark_red"
+            android:layout_marginTop="8dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/categorySelectionRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/createMovieButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/create_movie"
+            android:backgroundTint="@color/dark_red"
+            android:layout_marginTop="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/category_management"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"/>
+
+        <EditText
+            android:id="@+id/categoryNameInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/category_name"
+            android:textColorHint="@color/light_gray"
+            android:textColor="@android:color/white"
+            android:background="@color/gray"
+            android:padding="12dp"
+            android:layout_marginTop="8dp"/>
+
+        <CheckBox
+            android:id="@+id/categoryPromotedCheckbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/promoted_category"
+            android:backgroundTint="@color/dark_red"
+            android:layout_marginTop="8dp"/>
+
+        <Button
+            android:id="@+id/showMoviesForCategoryButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/show_movies_for_category"
+            android:backgroundTint="@color/dark_red"
+            android:layout_marginTop="8dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/movieSelectionForCategoryRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/createCategoryButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/create_category"
+            android:backgroundTint="@color/dark_red"
+            android:layout_marginTop="16dp"/>
+
+        <Button
+            android:id="@+id/showCategoriesForDeletionButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/show_categories_for_deletion"
+            android:backgroundTint="@color/dark_red"
+            android:layout_marginTop="16dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/categoriesDeletionRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/search_and_update"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"/>
+
+        <EditText
+            android:id="@+id/searchInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/search_movies"
+            android:textColorHint="@color/light_gray"
+            android:textColor="@android:color/white"
+            android:background="@color/gray"
+            android:padding="12dp"
+            android:layout_marginTop="8dp"/>
+
+        <Button
+            android:id="@+id/searchButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/search"
+            android:backgroundTint="@color/dark_red"
+            android:layout_marginTop="16dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/searchResultsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"/>
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,24 @@
+.footer {
+    background-color: #141414;
+    color: #757575;
+    padding: 20px 0;
+    text-align: center;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    border-top: 1px solid #333;
+    margin-top: 40px;
+  }
+  
+  .footer-content {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  /* Light mode styles */
+  body.light-mode .footer {
+    background-color: #dedcdc;
+    color: #333;
+    border-top: 1px solid #ccc;
+  }

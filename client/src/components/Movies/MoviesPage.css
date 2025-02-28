@@ -1,0 +1,36 @@
+.movies-page {
+  min-height: 100vh;
+  background: #141414;
+  color: white;
+  padding-top: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.movies-container {
+  padding: 20px 40px;
+  position: relative;
+  z-index: 1;
+  flex:1;
+}
+
+.category-section {
+  margin: 30px 0;
+
+}
+
+.movies-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 40px;
+  padding: 20px 0;
+}
+
+.featured-section {
+  position: relative;
+  margin-bottom: 20px;
+  width: 100%;
+  margin-top: -80px; /* Adjust if needed to align with navbar */
+  z-index: 1;
+}

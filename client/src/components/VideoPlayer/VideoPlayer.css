@@ -1,0 +1,75 @@
+.video-modal .modal-header .btn-close {
+  background-color: #E50914;
+  opacity: 1;
+  padding: 10px;
+  border-radius: 50%;
+}
+
+.video-modal .modal-header .btn-close:hover {
+  background-color: #C11119;
+  opacity: 1;
+}
+
+.video-modal .modal-header {
+  padding: 0.5rem 1rem;
+  background-color: #181818;
+}
+
+.video-modal {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.video-modal .modal-content {
+  background: #181818;
+  color: white;
+}
+
+.video-modal .modal-header {
+  border-bottom: 1px solid #404040;
+}
+
+.video-modal .modal-header .close {
+  color: white;
+}
+
+.video-container {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+}
+
+.video-player {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+}
+
+.modal-dialog {
+  max-width: 90vw !important;
+  margin: 1.75rem auto;
+}
+
+body.light-mode .video-modal {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+body.light-mode .video-modal .modal-content {
+  background: #ffffff;
+  color: #000000;
+}
+
+body.light-mode .video-modal .modal-header {
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #dedede;
+}
+
+body.light-mode .video-modal .btn-close {
+  background-color: #E50914;
+}
+
+body.light-mode .video-container {
+  background: #f5f5f5;
+}

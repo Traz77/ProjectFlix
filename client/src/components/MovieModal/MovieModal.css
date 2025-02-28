@@ -1,0 +1,242 @@
+.movie-modal {
+  display: flex !important;
+  align-items: flex-start !important; 
+  justify-content: center;
+  
+}
+
+.movie-modal .modal-dialog {
+  position: relative;
+  margin: 0 auto;
+  max-width: 850px; 
+  width: 90%;
+  margin-top:20px; 
+  margin-bottom: 20px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  transform: translateY(0);
+  opacity: 1;
+  overflow: visible;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1500;
+  transition: background 0.2s ease;
+}
+
+.close-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.movie-modal .modal-content {
+  background: #181818;
+  color: white;
+  border-radius: 8px;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.movie-trailer {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: none;
+  z-index: 2;
+}
+
+
+.modal-header-image {
+  position: relative;
+  width: 100%;
+  height: 480px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-header-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+}
+
+.modal-header-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, transparent, #181818 95%); 
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  z-index: 3;
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.header-content h1 {
+  font-size: 2.4rem; 
+  font-weight: bold;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.header-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.play-button {
+  padding: 0.5rem 1.5rem; 
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  background-color: #E50914;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.play-button:hover {
+  background-color: #C11119 !important;
+  transform: scale(1.05);
+}
+
+.modal-content-body {
+  display: flex;
+  padding: 1.5rem;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.modal-info {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.meta-data {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.year, .duration, .quality {
+  padding: 0.3rem 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.description {
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.modal-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 1rem;
+}
+
+.modal-details span {
+  color: #808080; 
+  font-weight: 600;
+}
+
+.modal-details p {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .modal-dialog {
+      max-width: 100%;
+      margin: 1rem;
+  }
+
+  .modal-header-image {
+      height: 300px;
+  }
+
+  .modal-content-body {
+      flex-direction: column;
+  }
+
+  .header-content h1 {
+      font-size: 1.8rem;
+  }
+
+
+  .play-button {
+      font-size: 0.9rem;
+  }
+  .recommendations-section {
+    padding: 2rem;
+    background: #181818;
+    margin-top: 2rem;
+    overflow: visible;
+    position: relative;
+    z-index: 1;
+    padding-bottom: 100px;
+  }
+  
+  .recommendations-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: white;
+  }
+  
+  .recommendations-message {
+    color: #999;
+    text-align: center;
+    padding: 1rem;
+  }
+  
+  /* Override ScrollableMovieList padding for modal */
+  .recommendations-section .scrollable-movie-list-container {
+    padding: 0 40px;
+    margin: 0;
+    overflow: visible;
+  position: relative;
+  }
+  .recommendations-section .movie-card-wrapper {
+    margin-bottom: 60px; /* Add space below cards to prevent cutoff */
+  }
+  
+}

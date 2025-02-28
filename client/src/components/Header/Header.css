@@ -1,0 +1,128 @@
+/* src/components/Header/Header.css */
+.netflix-nav {
+  padding: 20px 60px;
+  transition: all 0.3s ease;
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
+  background: transparent;
+}
+
+.netflix-nav.scrolled {
+  background: #141414;
+  box-shadow: 0 2px 4px rgba(0,0,0,.2);
+}
+
+.netflix-logo {
+  color: #e50914 !important;
+  font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0,0,0,.3);
+}
+
+.search-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  margin-right: 15px;
+}
+
+.search-input {
+  height: 32px !important;
+  width: 200px;
+  font-size: 14px;
+  background: rgba(0, 0, 0, 0.5) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: #fff !important;
+  padding: 6px 12px !important;
+  margin: 0 !important;
+  border-radius: 4px;
+}
+
+.search-input:focus {
+  background: rgba(0, 0, 0, 0.7) !important;
+  border-color: #fff !important;
+  box-shadow: none !important;
+}
+
+.navbar-nav .nav-link {
+  color: #fff !important;
+  margin: 0 10px;
+  font-size: 0.9rem;
+  text-shadow: 0 1px 2px rgba(0,0,0,.3);
+}
+
+.signin-link, .logout-link {
+  height: 32px !important;
+  padding: 4px 12px !important;
+  font-size: 14px;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  color: white !important;
+}
+
+.signin-link {
+  background-color: #E50914 !important;
+}
+
+.signin-link:hover {
+  background-color: #C11119 !important;
+}
+
+.logout-link {
+  color: #E50914 !important;
+  background-color: #E50914 !important;
+}
+
+.logout-link:hover {
+  background-color: #C11119 !important;
+}
+
+.manage-link {
+  height: 32px !important;
+  padding: 4px 12px !important;
+  font-size: 14px;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  color: white !important;
+}
+
+.manage-link:hover {
+  color: #E50914 !important;
+}
+
+@media (max-width: 991px) {
+  .netflix-nav {
+    padding: 10px 20px;
+  }
+  
+  .search-form {
+    margin: 10px 0;
+  }
+  
+  .search-input {
+    width: 100%;
+  }
+
+  .theme-toggle {
+  height: 32px !important;
+  padding: 4px 12px !important;
+  font-size: 14px;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 4px;
+  background-color: transparent !important;
+}
+
+.theme-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+}

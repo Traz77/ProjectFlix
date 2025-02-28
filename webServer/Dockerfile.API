@@ -1,0 +1,14 @@
+FROM node:16
+
+WORKDIR /app
+
+COPY webServer/package*.json ./
+
+RUN npm install body-parser custom-env mongoose cors express jsonwebtoken concurrently bcryptjs multer
+
+COPY webServer/ .
+COPY webServer/config/.env.local ./config/.env.local
+
+EXPOSE ${PORT}
+
+CMD ["node", "app.js"]

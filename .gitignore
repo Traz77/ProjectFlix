@@ -1,0 +1,17 @@
+.vscode/settings.json
+.vscode/c_cpp_properties.json
+.vscode/launch.json
+.vscode/tasks.json
+webServer/config/
+webServer/node_modules/
+webServer/package-lock.json
+webServer/package.json
+webServer/public/videos/
+node_modules
+package-lock.json
+package.json
+/clieמt/package-lock.json
+/client/package.json
+/client/node_modules
+.DS_Store
+.codegpt

@@ -1,0 +1,26 @@
+# Use gcc as base image
+FROM gcc:latest
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    cmake \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /usr/src/myapp
+
+# Copy CMake and source files
+COPY CMakeLists.txt .
+COPY src/ ./src/
+COPY headers/ ./headers/
+COPY tests/ ./tests/
+COPY data/ ./data/
+
+# Create build directory
+RUN mkdir build
+WORKDIR /usr/src/myapp/build
+
+# Build both the main application and tests
+RUN cmake -DCMAKE_BUILD_TYPE=Release .. && \
+    cmake --build .

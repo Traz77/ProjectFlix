@@ -1,0 +1,20 @@
+.scrollable-movie-card {
+    width: 245px;
+    height: 140px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+  
+  .scrollable-movie-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .movie-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }

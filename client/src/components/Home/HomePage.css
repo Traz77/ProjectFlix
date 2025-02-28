@@ -1,0 +1,57 @@
+.home-page {
+  min-height: 100vh;
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+              url('../../assets/background.jpg') no-repeat center center;
+  background-size: cover;
+}
+
+.hero-section {
+height: calc(100vh - 80px);
+display: flex;
+align-items: center;
+justify-content: center;
+text-align: center;
+color: white;
+}
+
+.hero-content {
+max-width: 800px;
+margin: 0 auto;
+}
+
+.hero-content h1 {
+font-size: 3.5rem;
+font-weight: bold;
+margin-bottom: 1rem;
+}
+
+.hero-content h2 {
+font-size: 1.8rem;
+font-weight: normal;
+margin-bottom: 2rem;
+}
+
+.cta-section {
+display: flex;
+gap: 1rem;
+justify-content: center;
+}
+
+.get-started-btn {
+background-color: #E50914 !important;
+border: none !important;
+padding: 0.8rem 2rem !important;
+}
+
+.get-started-btn:hover {
+background-color: #C11119 !important;
+}
+
+.sign-in-btn {
+border: 2px solid white !important;
+padding: 0.8rem 2rem !important;
+}
+
+.sign-in-btn:hover {
+background-color: rgba(255, 255, 255, 0.1) !important;
+}

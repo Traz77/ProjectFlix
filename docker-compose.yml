@@ -1,0 +1,73 @@
+
+version: "3.8"
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - shared_network
+    volumes:
+      - mongodb_data:/data/db
+
+  cpp_server:
+    build:
+      context: .
+      dockerfile: src/Dockerfile.TCP
+    environment:
+      RECOMMENDATION_PORT: ${RECOMMENDATION_PORT}
+    expose:
+      - "${RECOMMENDATION_PORT}"
+    ports:
+      - "${RECOMMENDATION_PORT}:${RECOMMENDATION_PORT}"
+    networks:
+      - shared_network
+    volumes:
+      - ./data:/usr/src/myapp/data
+      - ./src:/usr/src/myapp/src:ro
+      - ./tests:/usr/src/myapp/tests:ro
+      - ./headers:/usr/src/myapp/headers:ro
+    command: ./myapp ${RECOMMENDATION_PORT}
+
+  api_server:
+    build:
+      context: .
+      dockerfile: webServer/Dockerfile.API
+      no_cache: true
+    environment:
+      NODE_ENV: local
+      PORT: ${PORT}
+      CONNECTION_STRING: mongodb://mongo:27017
+      RECOMMENDATION_HOST: cpp_server
+      RECOMMENDATION_PORT: ${RECOMMENDATION_PORT}
+    extra_hosts:
+      - "localhost:host-gateway"
+    ports:
+      - "${PORT}:${PORT}"
+    networks:
+      - shared_network
+    depends_on:
+      - cpp_server
+      - mongo
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    environment:
+      - REACT_APP_API_URL=http://localhost:${PORT}
+      - PORT=${FRONTEND_PORT}
+    networks:
+      - shared_network
+    depends_on:
+      - api_server 
+
+networks:
+  shared_network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
