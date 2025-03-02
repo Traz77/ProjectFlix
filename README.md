@@ -14,9 +14,9 @@ https://henamar.atlassian.net/jira/software/projects/PE/boards/2/timeline
 How to run the program: 
 Clone repository from - https://github.com/Traz77/ProjectFlix.git
 
-Also, please include a config folder under webServer folder  (webServer/config)
-Inside the folder please open a file .env.local (webServer/config/.env.local)
-in the file please include
+- Also, please include a config folder under webServer folder  (webServer/config)
+- Inside the folder please open a file .env.local (webServer/config/.env.local)
+- in the file please include the following:
 
 PORT=XXXX // [(3000 for example) for the NodeJS Server]
 
