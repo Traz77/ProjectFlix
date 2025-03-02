@@ -1,9 +1,8 @@
-# Project-Ex4
 ## Description
 
 Welcome to our ProjectFlix! 
 
-Our workflow began with developing a C++ server that manages users, their watch history, and provides a reccomendation system based on similarity to other users and their preferences. 
+Our workflow began with developing a C++ server that manages users, their watch history, and provides a recommendation system based on similarity to other users and their preferences. 
 Then, we made a Node.JS server in MVC structure that store the movie and category objects, devides them, acts as a bridge to the recommendation system and store data in MongoDB - allowing CRUD operations. 
 At last, we created React Frontend and an Android app for the clients, to use the application accross platforms. 
 
