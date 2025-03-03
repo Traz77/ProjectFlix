@@ -58,6 +58,6 @@ Press File -> New -> Project From Version Control -> Insert the URL https://gith
 
 Then Press File -> Open -> choose android -> Sync with Gradle, use R language and run 
 
-**Please Note - The base url of the android is in port 3000 (http://10.0.2.2:3000/api/) this should match the backend port.
-**If you decide to change the backend port (PORT), please go in android -> res -> values -> strings.xml -> change the last string called api_url to the port you chose for the backend NodeJS
+- **Please Note - The base url of the android is in port 3000 (http://10.0.2.2:3000/api/) this should match the backend port.
+- **If you decide to change the backend port (PORT), please go in android -> res -> values -> strings.xml -> change the last string called api_url to the port you chose for the backend NodeJS
 
