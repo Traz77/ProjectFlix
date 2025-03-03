@@ -35,19 +35,19 @@ and paste it.)
 
 Using docker commands (in the the main folder): 
 
-docker-compose --env-file .\webServer\config\.env.local build (for PowerShell)
-docker-compose --env-file ./webServer/config/.env.local build (for Unix)
+- docker-compose --env-file .\webServer\config\.env.local build (for PowerShell)
+- docker-compose --env-file ./webServer/config/.env.local build (for Unix)
 
-docker-compose --env-file .\webServer\config\.env.local up -d (for PowerShell)
-docker-compose --env-file ./webServer/config/.env.local up -d (for Unix)
+- docker-compose --env-file .\webServer\config\.env.local up -d (for PowerShell)
+- docker-compose --env-file ./webServer/config/.env.local up -d (for Unix)
 
 If you want to run the tests for the cpp server please run the command
 
 docker-compose --env-file .\webServer\config\.env.local run --rm cpp_server ./runTests
 
 - To make yourself Admin: 
-docker exec -it mongo mongosh (make sure you are in the mongoDB database terminal after this command)
-db.users.updateOne( { email: "XXXX@example.com" }, { $set: { role: "admin" } } )
+- docker exec -it mongo mongosh (make sure you are in the mongoDB database terminal after this command)
+- db.users.updateOne( { email: "XXXX@example.com" }, { $set: { role: "admin" } } )
 
 
 To run the android app: 
