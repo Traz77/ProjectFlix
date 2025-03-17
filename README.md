@@ -54,7 +54,7 @@ To run the android app:
 
 On android studio
 
-Press File -> New -> Project From Version Control -> Insert the URL https://github.com/chenamar7/Project-Ex4.git
+Press File -> New -> Project From Version Control -> Insert the URL https://github.com/Traz77/ProjectFlix.git
 
 Then Press File -> Open -> choose android -> Sync with Gradle, use R language and run 
 
