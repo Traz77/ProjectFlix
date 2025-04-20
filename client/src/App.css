@@ -38,7 +38,7 @@
   color: #61dafb;
 }
 .content-container {
-  padding-top: 70px; /* Adjust based on your header height */
+  padding-top: 70px; 
   min-height: 100vh;
 }
 
