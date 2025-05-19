@@ -1,54 +1,103 @@
 ## Description
 
-Welcome to our ProjectFlix! 
+Welcome to **ProjectFlix** – a full-stack, cross-platform movie streaming application inspired by Netflix! 
 
-Our workflow began with developing a C++ server that manages users, their watch history, and provides a recommendation system based on similarity to other users and their preferences. 
-Then, we made a Node.JS server in MVC structure that store the movie and category objects, devides them, acts as a bridge to the recommendation system and store data in MongoDB - allowing CRUD operations. 
-At last, we created React Frontend and an Android app for the clients, to use the application accross platforms. 
+## Overview
 
-There are documentations and pictures in the Wiki folder. 
+Our application architecture follows a modular and scalable workflow across multiple technologies:
 
-Our Jira site: 
-https://henamar.atlassian.net/jira/software/projects/PE/boards/2/timeline
+- C++ Recommendation Server
+We started by developing a C++ backend server responsible for managing users, tracking their watch history, and generating personalized movie recommendations based on user similarity and preferences.
 
-How to run the program: 
-- Clone repository from - https://github.com/Traz77/ProjectFlix.git
+- Node.js Server (MVC Architecture)
+We then built a Node.js server using the MVC design pattern. This server handles movie and category objects, provides CRUD operations via MongoDB, and acts as a bridge between the frontend and the C++ recommendation engine.
 
-- Also, please include a config folder under webServer folder  (webServer/config)
-- Inside the folder please open a file .env.local (webServer/config/.env.local)
-- in the file please include the following:
+- Cross-Platform Clients: React Web App & Android App
+Finally, we developed two client interfaces: a React-based web frontend and a native Android application, allowing users to seamlessly access the platform across devices.
 
-PORT=XXXX // [(3000 for example) for the NodeJS Server]
+Feel free to explore [Wiki](wiki/) for detailed documentation and screenshots.
 
-REACT_APP_API_URL=http://localhost:XXXX/   (XXXX = this should be the same as PORT)
+## 🗂️ Project Structure
 
-RECOMMENDATION_PORT=XXXX // [(5555 for exmaple) for the CPP server]
 
-FRONTEND_PORT=XXXX // [(3001 for example) -> the app will run on http://localhost:XXXX/]
 
-CONNECTION_STRING=mongodb://host.docker.internal:27017 // (this will opearate on the local host)
+## 🚀 Getting Started
 
-JWT_SECRET=XXXX // (Generate the Token with this command - node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
-and paste it.)
+### 1. Clone the Repository
 
-**reach in the internet to the frontend port  http://localhost:XXXX/login
+```sh
+git clone https://github.com/Traz77/ProjectFlix.git
+```
+
+### 2. Configure Environment
+
+Create a config folder and `.env.local` file for the backend:
+
+```sh
+mkdir -p webServer/config
+touch webServer/config/.env.local
+```
+
+Add the following to `webServer/config/.env.local` (replace `XXXX` as needed):
+
+```env
+PORT=XXXX                  # Node.js server port (e.g., 3000)
+REACT_APP_API_URL=http://localhost:XXXX/
+RECOMMENDATION_PORT=XXXX   # C++ server port (e.g., 5555)
+FRONTEND_PORT=XXXX         # React frontend port (e.g., 3001)
+CONNECTION_STRING=mongodb://host.docker.internal:27017
+JWT_SECRET=XXXX            # Generate with: node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
 
 Using docker commands (in the the main folder): 
 
-- docker-compose --env-file .\webServer\config\.env.local build (for PowerShell)
-- docker-compose --env-file ./webServer/config/.env.local build (for Unix)
+### 3. Run with Docker (in the the main folder aka PROJECTFLIX):
 
-- docker-compose --env-file .\webServer\config\.env.local up -d (for PowerShell)
-- docker-compose --env-file ./webServer/config/.env.local up -d (for Unix)
+**Build containers:**
 
-If you want to run the tests for the cpp server please run the command
+- PowerShell:
+  ```sh
+  docker-compose --env-file .\webServer\config\.env.local build
+  ```
+- Unix/Mac:
+  ```sh
+  docker-compose --env-file ./webServer/config/.env.local build
+  ```
 
-docker-compose --env-file .\webServer\config\.env.local run --rm cpp_server ./runTests
+**Start services:**
 
-- To make yourself Admin: 
-- docker exec -it mongo mongosh (make sure you are in the mongoDB database terminal after this command)
-- db.users.updateOne( { email: "XXXX@example.com" }, { $set: { role: "admin" } } )
+- PowerShell:
+  ```sh
+  docker-compose --env-file .\webServer\config\.env.local up -d
+  ```
+- Unix/Mac:
+  ```sh
+  docker-compose --env-file ./webServer/config/.env.local up -d
+  ```
 
+---
+### 4. Run C++ Server Tests (if you want)
+
+```sh
+docker-compose --env-file ./webServer/config/.env.local run --rm cpp_server ./runTests
+```
+
+---
+
+### 5. Make Yourself Admin (if you want)
+
+```sh
+docker exec -it mongo mongosh
+# In the MongoDB shell:
+db.users.updateOne({ email: "YOUR_EMAIL@example.com" }, { $set: { role: "admin" } })
+```
+
+---
+## 🌐 Access the App
+
+- **Frontend:** [http://localhost:XXXX/login](http://localhost:XXXX/login) (replace XXXX with your frontend port)
+
+---
 
 To run the android app: 
 
@@ -58,6 +107,17 @@ Press File -> New -> Project From Version Control -> Insert the URL https://gith
 
 Then Press File -> Open -> choose android -> Sync with Gradle, use R language and run 
 
-- **Please Note - The base url of the android is in port 3000 (http://10.0.2.2:3000/api/) this should match the backend port.
-- **If you decide to change the backend port (PORT), please go in android -> res -> values -> strings.xml -> change the last string called api_url to the port you chose for the backend NodeJS
+## 📱 Android App
 
+1. Open Android Studio
+2. File → New → Project from Version Control → Paste repo URL
+3. File → Open → Select `android/` → Sync with Gradle
+4. Update `android/res/values/strings.xml` if you change backend port (`api_url`)
+5. Run the app
+
+- Please Note - The base url of the android port is 3000 (http://10.0.2.2:3000/api/) this should match the backend port. (point number 4)
+
+---
+
+
+Enjoy streaming with ProjectFlix! 🎬🍿
