@@ -21,7 +21,7 @@ Feel free to explore [Wiki](wiki/) for detailed documentation and screenshots.
 
 
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Clone the Repository
 
