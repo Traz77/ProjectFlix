@@ -18,7 +18,7 @@ Finally, we developed two client interfaces: a React-based web frontend and a na
 Feel free to explore [Wiki](wiki/) for detailed documentation and screenshots.
 
 ## 🗂️ Project Structure
-
+```
 ProjectFlix/
 ├── android/                # Android native application
 ├── client/                 # React web application 
