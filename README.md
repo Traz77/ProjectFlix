@@ -20,23 +20,30 @@ Feel free to explore [Wiki](wiki/) for detailed documentation and screenshots.
 ## 🗂️ Project Structure
 ```
 ProjectFlix/
-├── android/                # Android native application
-├── client/                 # React web application 
-│   └── src/                # React source code and components 
-├── headers/                # C++ header files
-├── src/                    # C++ source files
-├── tests/                  # C++ test files
-├── webServer/              # Node.js backend server
-│   ├── controllers/        # MVC controllers
-│   ├── models/             # Database models
-│   ├── routes/             # API routes
-│   └── config/             # Configuration files
-├── data/                   # Data storage for recommendation engine
-├── wiki/                   # Documentation
-│   ├── web.md              # Web application guide
-│   └── android.md          # Android application guide
-├── docker-compose.yml      # Docker services configuration
-└── CMakeLists.txt          # C++ build configuration
+├── android/                           # Android native application
+├── client/                            # React web application 
+│   └── src/                           # React source code and components 
+├── headers/                           # C++ header files
+├── src/                               # C++ source files - Recommendation engine
+├── tests/                             # C++ test files
+├── webServer/                         # Node.js backend server
+│   ├── controllers/                   # MVC controllers
+│   ├── models/                        # Database models (MongoDB)
+│   ├── routes/                        # API routes
+│   ├── middlewares/                   # Middleware logic (e.g., authentication, file uploads)
+│   │   ├── auth.js                    # Handles user authentication and authorization
+│   │   └── upload.js                  # Manages file uploads for images, trailers, and videos
+│   ├── services/                      # Business logic and external service integrations
+│   │   ├── UserServices.js            # Handles user-related operations (e.g., CRUD, watch history)
+│   │   ├── MovieService.js            # Manages movie-related operations
+│   │   └── RecommendationService.js   # Communicates with the C++ recommendation engine
+│   └── config/                        # Configuration files
+├── data/                              # Data storage for recommendation engine
+├── wiki/                              # Documentation
+│   ├── web.md                         # Web application guide
+│   └── android.md                     # Android application guide
+├── docker-compose.yml                 # Docker services configuration
+└── CMakeLists.txt                     # C++ build configuration
 ```
 
 ### Key Components:
