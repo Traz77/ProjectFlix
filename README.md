@@ -19,7 +19,54 @@ Feel free to explore [Wiki](wiki/) for detailed documentation and screenshots.
 
 ## 🗂️ Project Structure
 
+ProjectFlix/
+├── android/                # Android native application
+├── client/                 # React web application 
+│   └── src/                # React source code and components 
+├── headers/                # C++ header files
+├── src/                    # C++ source files
+├── tests/                  # C++ test files
+├── webServer/              # Node.js backend server
+│   ├── controllers/        # MVC controllers
+│   ├── models/             # Database models
+│   ├── routes/             # API routes
+│   └── config/             # Configuration files
+├── data/                   # Data storage for recommendation engine
+├── wiki/                   # Documentation
+│   ├── web.md              # Web application guide
+│   └── android.md          # Android application guide
+├── docker-compose.yml      # Docker services configuration
+└── CMakeLists.txt          # C++ build configuration
+```
 
+### Key Components:
+
+- **C++ Backend**: Recommendation engine and core business logic
+- **Node.js Server**: REST API and database operations
+- **React Frontend**: Web user interface
+- **Android App**: Native mobile interface
+- **Docker**: Containerization and deployment
+- **MongoDB**: Data persistence
+
+### Architecture Overview:
+
+1. **Backend Layer**:
+   - Node.js REST API
+   - MongoDB integration
+   - Authentication/Authorization
+   - File handling
+
+3. **Recommendation Engine**:
+   - C++ core logic
+   - User similarity analysis
+   - Watch history processing
+   - Movie recommendations
+
+3. **Frontend Layer**:
+   - React web application
+   - Android native app
+   - User interface components
+   - State management
 
 ## Getting Started
 
