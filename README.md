@@ -6,13 +6,13 @@ Welcome to **ProjectFlix** – a full-stack, cross-platform movie streaming appl
 
 Our application architecture follows a modular and scalable workflow across multiple technologies:
 
-- C++ Recommendation Server
+- C++ Recommendation Server - 
 We started by developing a C++ backend server responsible for managing users, tracking their watch history, and generating personalized movie recommendations based on user similarity and preferences.
 
-- Node.js Server (MVC Architecture)
+- Node.js Server (MVC Architecture) - 
 We then built a Node.js server using the MVC design pattern. This server handles movie and category objects, provides CRUD operations via MongoDB, and acts as a bridge between the frontend and the C++ recommendation engine.
 
-- Cross-Platform Clients: React Web App & Android App
+- Cross-Platform Clients: React Web App & Android App - 
 Finally, we developed two client interfaces: a React-based web frontend and a native Android application, allowing users to seamlessly access the platform across devices.
 
 Feel free to explore [Wiki](wiki/) for detailed documentation and screenshots.
