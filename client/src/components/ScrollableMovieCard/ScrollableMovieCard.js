@@ -9,6 +9,17 @@ const ScrollableMovieCard = ({ movie }) => {
     setShowModal(true);
   };
 
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return 'https://place-hold.it/245x140';
+
+    if (imagePath.startsWith('http')) {
+      return imagePath;
+    }
+
+    const serverUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000';
+    return `${serverUrl}${imagePath}`;
+  };
+
   return (
     <>
       <div 
@@ -17,7 +28,7 @@ const ScrollableMovieCard = ({ movie }) => {
         style={{ pointerEvents: 'auto' }}
       >
         <img 
-          src={movie.mainImage || 'https://place-hold.it/245x140'} 
+          src={getImageUrl(movie.mainImage)} 
           alt={movie.name} 
           className="movie-card-img" 
         />

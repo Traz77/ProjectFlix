@@ -11,7 +11,6 @@ const requireAuth = async (req, res, next) => {
     const token = authHeader.split(' ')[1];
     const decoded = verifyToken(token);
     
-    // Only check if token is valid (not expired since we removed expiration)
     if (!decoded) {
       return res.status(401).json({ error: 'Invalid token' });
     }
