@@ -49,8 +49,7 @@ ProjectFlix/
 │   │   └── ...                          # Other routes
 │   ├── middlewares/                     # Express middleware
 │   │   ├── auth.js                      # Authentication middleware
-│   │   ├── upload.js                    # File upload handling
-│   │   └── ...                          # Other middleware
+│   │   └── upload.js                    # File upload handling
 │   ├── services/                        # Business logic
 │   │   ├── UserServices.js              # User operations
 │   │   ├── MovieService.js              # Movie management
