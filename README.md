@@ -20,30 +20,70 @@ Feel free to explore [Wiki](wiki/) for detailed documentation and screenshots.
 ## 🗂️ Project Structure
 ```
 ProjectFlix/
-├── android/                           # Android native application
-├── client/                            # React web application 
-│   └── src/                           # React source code and components 
-├── headers/                           # C++ header files
-├── src/                               # C++ source files - Recommendation engine
-├── tests/                             # C++ test files
-├── webServer/                         # Node.js backend server
-│   ├── controllers/                   # MVC controllers
-│   ├── models/                        # Database models (MongoDB)
-│   ├── routes/                        # API routes
-│   ├── middlewares/                   # Middleware logic (e.g., authentication, file uploads)
-│   │   ├── auth.js                    # Handles user authentication and authorization
-│   │   └── upload.js                  # Manages file uploads for images, trailers, and videos
-│   ├── services/                      # Business logic and external service integrations
-│   │   ├── UserServices.js            # Handles user-related operations (e.g., CRUD, watch history)
-│   │   ├── MovieService.js            # Manages movie-related operations
-│   │   └── RecommendationService.js   # Communicates with the C++ recommendation engine
-│   └── config/                        # Configuration files
-├── data/                              # Data storage for recommendation engine
-├── wiki/                              # Documentation
-│   ├── web.md                         # Web application guide
-│   └── android.md                     # Android application guide
-├── docker-compose.yml                 # Docker services configuration
-└── CMakeLists.txt                     # C++ build configuration
+├── client/                              # React web application 
+│   ├── public/                          # Static assets
+│   ├── src/                             # React source code
+│   │   ├── components/                  # UI components
+│   │   │   ├── Movies/                  # Movie-related components
+│   │   │   ├── ScrollableMovieCard/     # Recommended movies card
+│   │   │   ├── MovieModal/              # Movie details modal
+│   │   │   ├── Auth/                    # Authentication components
+│   │   │   └── ...                      # Other components
+│   │   ├── services/                    # API communication
+│   │   │   └── api.js                   # HTTP client and API methods
+│   │   └── App.js                       # Main app component
+│   └── package.json                     # Dependencies and scripts
+├── webServer/                           # Node.js backend server (MVC)
+│   ├── controllers/                     # Request handlers
+│   │   ├── UserController.js            # User operations
+│   │   ├── MovieController.js           # Movie management
+│   │   ├── RecommendationController.js  # C++ engine integration
+│   │   └── ...                          # Other controllers
+│   ├── models/                          # Database schemas (MongoDB)
+│   │   ├── UserModel.js                 # User data model
+│   │   ├── MovieModel.js                # Movie data model
+│   │   └── ...                          # Other models
+│   ├── routes/                          # API endpoints
+│   │   ├── UserRoutes.js                # User API routes
+│   │   ├── MovieRoute.js                # Movie API routes
+│   │   └── ...                          # Other routes
+│   ├── middlewares/                     # Express middleware
+│   │   ├── auth.js                      # Authentication middleware
+│   │   ├── upload.js                    # File upload handling
+│   │   └── ...                          # Other middleware
+│   ├── services/                        # Business logic
+│   │   ├── UserServices.js              # User operations
+│   │   ├── MovieService.js              # Movie management
+│   │   ├── RecommendationService.js     # C++ engine integration
+│   │   └── ...                          # Other services
+│   ├── config/                          # Configuration files
+│   │   └── .env.local                   # Environment variables (create this)
+│   ├── static/                          # Static file storage
+│   └── app.js                           # Express application
+├── src/                                 # C++ recommendation engine
+│   ├── main.cpp                         # TCP server entry point
+│   ├── UserManager.cpp                  # User data management
+│   ├── MovieRecommender.cpp             # Recommendation algorithms
+│   ├── DatabaseManager.cpp              # Data persistence
+│   └── ...                              # Other C++ source files
+├── headers/                             # C++ header files
+│   ├── UserManager.h
+│   ├── MovieRecommender.h
+│   └── ...                              # Other header files
+├── tests/                               # C++ unit tests
+│   ├── UserManagerTest.cpp
+│   ├── RecommendationTest.cpp
+│   ├── ServerMenuTest.cpp
+│   └── ...                              # Other test files
+├── build/                               # C++ compilation output
+│   ├── myapp                            # Compiled recommendation server
+│   └── runTests                         # Compiled test suite
+├── data/                                # Recommendation engine data
+├── wiki/                                # Project documentation
+├── docker-compose.yml                   # Multi-container orchestration
+├── Dockerfile.client                    # React frontend container
+├── CMakeLists.txt                       # C++ build configuration
+└── README.md                            # Project documentation
 ```
 
 ### Key Components:
