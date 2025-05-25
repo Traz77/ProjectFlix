@@ -1,6 +1,6 @@
 # Web Application Guide
 
-## Authentication Flows
+## Authentication Flows 
 
 ### Welcome Page
 ![alt text](webPhotos/HomePage(Unsigned).png)
