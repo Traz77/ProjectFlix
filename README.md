@@ -74,9 +74,6 @@ ProjectFlix/
 │   ├── RecommendationTest.cpp
 │   ├── ServerMenuTest.cpp
 │   └── ...                              # Other test files
-├── build/                               # C++ compilation output
-│   ├── myapp                            # Compiled recommendation server
-│   └── runTests                         # Compiled test suite
 ├── data/                                # Recommendation engine data
 ├── wiki/                                # Project documentation
 ├── docker-compose.yml                   # Multi-container orchestration
