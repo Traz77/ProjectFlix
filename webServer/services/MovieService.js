@@ -1,8 +1,8 @@
 const Movie = require('../models/MovieModel');
 const User = require('../models/UserModel');
 const Category = require('../models/CategoryModel');
-const CategoryService = require ('../services/CategoryService');
-const watchHistoryService = require ('../services/WatchHistoryService');
+const CategoryService = require('../services/CategoryService');
+const watchHistoryService = require('../services/WatchHistoryService');
 const mongoose = require('mongoose');
 const fs = require('fs');
 const path = require('path');
@@ -10,21 +10,21 @@ const path = require('path');
 // Generate a unique number ID that will fit the c++ recommendation system
 async function generateUniqueId() {
     // Get the last movie added
-    const lastMovie = await Movie.findOne().sort({ id: -1 }); 
+    const lastMovie = await Movie.findOne().sort({ id: -1 });
     // Increment the last ID or start from 1, that way, all stays unique
-    return lastMovie ? lastMovie.id + 1 : 1; 
+    return lastMovie ? lastMovie.id + 1 : 1;
 }
 
 const createMovie = async (movieData, files) => {
     try {
         const { name, duration, year, description, director, cast, categories } = movieData;
-        
+
         // Process uploaded files
         const mainImagePath = files.mainImage ? `/static/images/${files.mainImage[0].filename}` : '';
         const trailerPath = files.trailer ? `/static/trailers/${files.trailer[0].filename}` : '';
-        const imagesPath = files.images ? 
+        const imagesPath = files.images ?
             files.images.map(file => `/static/images/${file.filename}`) : [];
-        const movieFilePath = files.movieFile ? 
+        const movieFilePath = files.movieFile ?
             `/static/videos/${files.movieFile[0].filename}` : '';
 
         // Parse categories safely
@@ -32,7 +32,7 @@ const createMovie = async (movieData, files) => {
         try {
             // Log the raw categories value for debugging
             console.log('Raw categories:', categories);
-            
+
             // Handle different category formats
             if (typeof categories === 'string') {
                 try {
@@ -52,7 +52,7 @@ const createMovie = async (movieData, files) => {
         }
 
         const customId = await generateUniqueId();
-        
+
         const newMovie = new Movie({
             id: customId,
             name,
@@ -78,6 +78,51 @@ const createMovie = async (movieData, files) => {
     }
 };
 
+const createMovieFromScript = async (movieData) => {
+    try {
+        const { name, duration, year, description, director, cast, categories, mainImage, trailer, movieFile } = movieData;
+
+        // Parse categories safely
+        let parsedCategories;
+        try {
+            if (typeof categories === 'string') {
+                parsedCategories = JSON.parse(categories);
+            } else if (Array.isArray(categories)) {
+                parsedCategories = categories;
+            } else {
+                parsedCategories = [];
+            }
+        } catch (err) {
+            throw new Error('invalid category format');
+        }
+
+        const customId = await generateUniqueId();
+
+        const newMovie = new Movie({
+            id: customId,
+            name,
+            duration,
+            year,
+            description: description || '',
+            director: director || '',
+            cast: cast || [],
+            mainImage: mainImage || '',
+            images: [],
+            trailer: trailer || '',
+            movieFile: movieFile || '',
+        });
+
+        await checkAllCategoriesAreValid(newMovie, parsedCategories);
+        await addMovieToGivenCategories(newMovie, parsedCategories);
+        await newMovie.save();
+
+        return newMovie.populate("categories.categoryId");
+    } catch (error) {
+        console.error('Create movie from script error:', error);
+        throw error;
+    }
+};
+
 // A method that checks that all categories are in database before making a change 
 const checkAllCategoriesAreValid = async (movie, categories) => {
     if (categories && categories.length > 0) {
@@ -95,8 +140,8 @@ const checkAllCategoriesAreValid = async (movie, categories) => {
 
 // A method that remove a movie from all categories 
 const removeMovieFromAllCategories = async (movieToRemove) => {
-    const categoryIds = movieToRemove.categories.map(category => category.categoryId); 
-        
+    const categoryIds = movieToRemove.categories.map(category => category.categoryId);
+
     await Category.updateMany(
         { _id: { $in: categoryIds } },
         { $pull: { movies: { movieId: movieToRemove._id } } },
@@ -107,7 +152,7 @@ const removeMovieFromAllCategories = async (movieToRemove) => {
 // Retrieve a movie by its custom c++ server ID 
 const getMovieByCustomID = async (id) => {
     const movie = await Movie.findOne
-    ({ id }).populate('categories');
+        ({ id }).populate('categories');
     return movie;
 };
 
@@ -137,7 +182,7 @@ const getMovieById = async (id) => {
 // Retrieve the movie by the C++ custom ID
 const getMovieByCustomId = async (id) => {
     const movie = await Movie.findOne
-    ({ id }).populate("categories");
+        ({ id }).populate("categories");
     return movie;
 };
 
@@ -148,7 +193,7 @@ const updateMovie = async (movieData, id, files) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
         throw { status: 400, message: "Invalid MongoDB ID" };
     }
-    
+
     const movieToUpdate = await Movie.findById(id).populate("categories.categoryId");
 
     if (!movieToUpdate) {
@@ -227,10 +272,10 @@ const deleteMovie = async (id) => {
         if (!mongoose.Types.ObjectId.isValid(id)) {
             throw { status: 400, message: "Invalid MongoDB ID" };
         }
-        
+
         // Find the movie to delete
         const movieToDelete = await Movie.findById(id);
-        
+
         if (!movieToDelete) {
             return null;
         }
@@ -264,14 +309,14 @@ const deleteMovie = async (id) => {
                 fs.unlinkSync(movieFilePath);
             }
         }
-        
+
         removeMovieFromAllCategories(movieToDelete);
-    
+
         // Find users who have this movie in watchHistory
         const usersWithMovie = await User.find({ "watchHistory.movieId": movieToDelete._id });
-      
+
         // Remove movie from users' watchHistory and remove from the C++ server 
-        const recommendationService = require('./RecommendationService'); 
+        const recommendationService = require('./RecommendationService');
         for (const user of usersWithMovie) {
             await User.updateOne(
                 { _id: user._id },
@@ -280,7 +325,7 @@ const deleteMovie = async (id) => {
             // Delete from the C++ 
             await recommendationService.sendCommand(user._id, movieToDelete._id, 'DELETE');
         }
-        
+
         // Delete movie and return it
         const deletedMovie = await Movie.findByIdAndDelete(id);
         return deletedMovie;
@@ -306,22 +351,22 @@ const searchMovies = async (searchQuery) => {
         // Search in fields that are strings
         const query = {
             $or: [
-                { name: { $regex: regex } }, 
-                { description: { $regex: regex } }, 
-                { director: { $regex: regex } }, 
-                { cast: { $regex: regex } }, 
-                { mainImage: { $regex: regex } }, 
-                { images: { $regex: regex } }, 
+                { name: { $regex: regex } },
+                { description: { $regex: regex } },
+                { director: { $regex: regex } },
+                { cast: { $regex: regex } },
+                { mainImage: { $regex: regex } },
+                { images: { $regex: regex } },
                 { trailer: { $regex: regex } },
-                
+
             ]
         };
 
         // Add category search if we found matching categories
         if (matchingCategories.length > 0) {
-            query.$or.push({ 
-                'categories.categoryId': { 
-                    $in: matchingCategories.map(cat => cat._id) 
+            query.$or.push({
+                'categories.categoryId': {
+                    $in: matchingCategories.map(cat => cat._id)
                 }
             });
         }
@@ -329,17 +374,17 @@ const searchMovies = async (searchQuery) => {
         // Search in fields that are numbers 
         if (isNumeric) {
             const numericValue = Number(searchQuery);
-            query.$or.push({ id: numericValue }); 
-            query.$or.push({ duration: numericValue }); 
-            query.$or.push({ year: numericValue }); 
+            query.$or.push({ id: numericValue });
+            query.$or.push({ duration: numericValue });
+            query.$or.push({ year: numericValue });
         }
 
         const movies = await Movie.find(query).populate('categories.categoryId');
         return movies;
 
     } catch (error) {
-      console.error('Error in searchMovies service:', error);
-      throw error;
+        console.error('Error in searchMovies service:', error);
+        throw error;
     }
 };
 
@@ -380,4 +425,4 @@ const getMoviesList = async (userId) => {
     }
 };
 
-module.exports = { createMovie, getMovieById, getMovieByCustomId, updateMovie, deleteMovie, searchMovies, getMoviesList }
+module.exports = { createMovie, getMovieById, getMovieByCustomId, updateMovie, deleteMovie, searchMovies, getMoviesList, createMovieFromScript }

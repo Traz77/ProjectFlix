@@ -47,6 +47,53 @@ const createMovie = async (req, res) => {
     }
 };
 
+const createMovieFromScript = async (req, res) => {
+    try {
+        // Parse fields from request body
+        const { name, duration, year, description, director, mainImage, trailer, movieFile } = req.body;
+
+        // Validate required fields
+        if (!name || !duration || !year) {
+            return res.status(400).json({ error: "Name, duration and year are required" });
+        }
+        
+        // Parse cast from JSON string
+        let cast = [];
+        try {
+            cast = req.body.cast ? JSON.parse(req.body.cast) : [];
+        } catch (e) {
+            return res.status(400).json({ error: "Invalid cast format" });
+        }
+
+        // Parse categories from JSON string
+        let categories = [];
+        try {
+            categories = req.body.categories ? JSON.parse(req.body.categories) : [];
+        } catch (e) {
+            return res.status(400).json({ error: "Invalid categories format" });
+        }
+
+        const movieData = {
+            name,
+            duration,
+            year,
+            description: description || '',
+            director: director || '',
+            cast,
+            categories,
+            mainImage: mainImage || '',   
+            trailer: trailer || '',
+            movieFile: movieFile || ''
+        };  
+
+        // Call service without files parameter
+        const newMovie = await movieService.createMovieFromScript(movieData);
+        return res.status(201).json(newMovie);
+    } catch (error) {
+        return res.status(400).json({ error: error.message });
+    }
+};
+
 const getMovie = async (req, res) => {
     const { id } = req.params; 
 
@@ -178,5 +225,5 @@ const searchMovies = async (req, res) => {
     }
 };
 
-module.exports = { createMovie, getMovie, updateMovie, deleteMovie, getMoviesList ,searchMovies };
+module.exports = { createMovie, getMovie, updateMovie, deleteMovie, getMoviesList ,searchMovies, createMovieFromScript };
 

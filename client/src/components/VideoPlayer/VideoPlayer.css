@@ -47,11 +47,31 @@
   background: #000;
 }
 
+/* Style for iframe (YouTube) */
+.video-player iframe {
+  border: none;
+}
+
+/* Style for video element (local files) */
+.video-player video {
+  object-fit: contain;
+}
+
+.no-video-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #ccc;
+}
+
 .modal-dialog {
   max-width: 90vw !important;
   margin: 1.75rem auto;
 }
 
+/* Light mode styles */
 body.light-mode .video-modal {
   background: rgba(255, 255, 255, 0.85);
 }
@@ -72,4 +92,8 @@ body.light-mode .video-modal .btn-close {
 
 body.light-mode .video-container {
   background: #f5f5f5;
+}
+
+body.light-mode .no-video-message {
+  color: #666;
 }

@@ -1,54 +1,109 @@
-// Component for displaying a video player in a modal window
 import React from 'react';
 import { Modal } from 'react-bootstrap';
 import './VideoPlayer.css';
 
 const VideoPlayer = ({ show, handleClose, videoPath, movieName }) => {
-  // Get the server URL from the environment variables
   const serverUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000';
-  // Check if the body has the light-mode class to determine if the player should be light mode
   const isLightMode = document.body.classList.contains('light-mode');
 
-  // Check if the video path is a URL or a local file path
-  const fullVideoPath = videoPath?.startsWith('http') ? 
-    videoPath : 
-    videoPath?.startsWith('/static/') ?
-      `${serverUrl}${videoPath}` :
-      videoPath ? `${serverUrl}/static/videos/${videoPath}` : null;
+  // Function to detect if URL is YouTube
+  const isYouTubeUrl = (url) => {
+    if (!url) return false;
+    const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    return youtubeRegex.test(url);
+  };
 
-    console.log('Full video path:', fullVideoPath);
+  // Function to get YouTube embed URL
+  const getYouTubeEmbedUrl = (url) => {
+    const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const match = url.match(youtubeRegex);
+    if (match) {
+      return `https://www.youtube.com/embed/${match[1]}?autoplay=1&controls=1`;
+    }
+    return null;
+  };
 
-    return (
-      <Modal show={show} onHide={handleClose} size="xl" centered className="video-modal">
-        <Modal.Header closeButton>
-          <Modal.Title>{movieName}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="video-container">
-            {fullVideoPath ? (
+  // Function to get local video URL
+  const getLocalVideoUrl = (path) => {
+    if (!path) return null;
+    
+    // If it's already a full URL, return as is
+    if (path.startsWith('http')) {
+      return path;
+    }
+    
+    // If it's a static file path
+    if (path.startsWith('/static/')) {
+      return `${serverUrl}${path}`;
+    }
+    
+    // Default to videos folder
+    return `${serverUrl}/static/videos/${path}`;
+  };
+
+  // Determine video type and get appropriate URL
+  const isYouTube = isYouTubeUrl(videoPath);
+  const videoUrl = isYouTube ? getYouTubeEmbedUrl(videoPath) : getLocalVideoUrl(videoPath);
+
+  console.log('Video path:', videoPath);
+  console.log('Is YouTube:', isYouTube);
+  console.log('Final URL:', videoUrl);
+
+  return (
+    <Modal show={show} onHide={handleClose} size="xl" centered className="video-modal">
+      <Modal.Header closeButton>
+        <Modal.Title>{movieName}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <div className="video-container">
+          {videoUrl ? (
+            isYouTube ? (
+              // YouTube iframe
+              <iframe
+                src={videoUrl}
+                title={movieName}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="video-player"
+                style={{ width: '100%', height: '100%' }}
+              />
+            ) : (
+              // Local video file
               <video
                 controls
                 autoPlay
                 className="video-player"
-                key={fullVideoPath}
+                key={videoUrl}
+                onError={(e) => {
+                  console.error('Video loading error:', e);
+                  console.log('Failed to load video from:', videoUrl);
+                }}
               >
                 <source 
-                  src={fullVideoPath} 
+                  src={videoUrl} 
                   type="video/mp4"
-                  onError={(e) => {
-                    console.error('Video loading error:', e);
-                    console.log('Failed to load video from:', fullVideoPath);
-                  }}
+                />
+                <source 
+                  src={videoUrl} 
+                  type="video/webm"
+                />
+                <source 
+                  src={videoUrl} 
+                  type="video/ogg"
                 />
                 Your browser does not support the video tag.
               </video>
-            ) : (
-              <div>No video file available</div>
-            )}
-          </div>
-        </Modal.Body>
-      </Modal>
-    );
-  };
-  
-  export default VideoPlayer;
+            )
+          ) : (
+            <div className="no-video-message">
+              <p>No video file available</p>
+            </div>
+          )}
+        </div>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+export default VideoPlayer;

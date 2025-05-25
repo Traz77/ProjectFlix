@@ -19,6 +19,12 @@ router.route('/')
         movieController.createMovie
       );
 
+router.post('/script', requireAuth, movieController.createMovieFromScript);
+
+// Route to get movie by searching a query
+router.route ('/search/:query')
+    .get(movieController.searchMovies);
+
 // Route to function of movie by its ID
 router.route('/:id')
     .get(movieController.getMovie)
@@ -38,9 +44,5 @@ router.route('/:id')
 router.route ('/:id/recommend')
     .get(requireAuth, recommendationController.getRecommendations)
     .post(requireAuth, recommendationController.AddMovieToRecommendations);
-
-// Route to get movie by searching a query
-router.route ('/search/:query')
-    .get(movieController.searchMovies);
 
 module.exports = router;
