@@ -66,13 +66,13 @@ ProjectFlix/
 │   ├── DatabaseManager.cpp              # Data persistence
 │   └── ...                              # Other C++ source files
 ├── headers/                             # C++ header files
-│   ├── UserManager.h
-│   ├── MovieRecommender.h
+│   ├── User.h
+│   ├── TCPServer.h
 │   └── ...                              # Other header files
 ├── tests/                               # C++ unit tests
-│   ├── UserManagerTest.cpp
-│   ├── RecommendationTest.cpp
-│   ├── ServerMenuTest.cpp
+│   ├── User.cpp
+│   ├── Recommend.cpp
+│   ├── TCPServer.cpp
 │   └── ...                              # Other test files
 ├── data/                                # Recommendation engine data
 ├── wiki/                                # Project documentation
@@ -96,7 +96,7 @@ ProjectFlix/
 1. **Backend Layer**:
    - Node.js REST API
    - MongoDB integration
-   - Authentication/Authorization
+   - Authentication/Authorization - JWT
    - File handling
 
 3. **Recommendation Engine**:
