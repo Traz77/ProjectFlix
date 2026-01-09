@@ -226,4 +226,3 @@ const searchMovies = async (req, res) => {
 };
 
 module.exports = { createMovie, getMovie, updateMovie, deleteMovie, getMoviesList ,searchMovies, createMovieFromScript };
-
