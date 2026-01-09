@@ -1,6 +1,6 @@
-//A component that displays the management page for a admin user.
+//A component that displays the movie addition form for admin users.
 import React, { useState, useEffect } from 'react';
-import { Form, Button, ListGroup } from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
 import { api } from '../../services/api';
 
 const MovieManagement = () => {
@@ -17,39 +17,16 @@ const MovieManagement = () => {
   const [files, setFiles] = useState({
     mainImage: null,
     trailer: null,
+    movieFile: null,
     images: []
   });
 
-  const [movies, setMovies] = useState([]);
   const [availableCategories, setAvailableCategories] = useState([]);
-  const [deleteId, setDeleteId] = useState('');
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchMovies();
     fetchCategories();
   }, []);
-
-
-  const fetchMovies = async () => {
-    try {
-      const response = await api.getMovies();
-
-      // Get unique movies by mongoId to prevent duplicates
-      const uniqueMovies = Array.from(
-        new Map(
-          response.data
-            .flatMap(category => category.movies)
-            .map(movie => [movie._id, movie])
-        ).values()
-      );
-
-      setMovies(uniqueMovies);
-    } catch (err) {
-      console.error('Error fetching movies:', err);
-      setError('Failed to fetch movies');
-    }
-  };
 
   // Fetch categories from the server
   const fetchCategories = async () => {
@@ -104,9 +81,8 @@ const MovieManagement = () => {
       // Send the request to the server
       const response = await api.createMovie(formData);
 
-      // If the response is successful, fetch the movies again
+      // If the response is successful, reset form
       if (response.status === 201) {
-        fetchMovies();
         resetForm();
         setError(null);
       } else {
@@ -115,23 +91,6 @@ const MovieManagement = () => {
     } catch (err) {
       console.error('Error creating movie:', err);
       setError(err.response?.data?.error || 'Failed to create movie');
-    }
-  };
-
-  // Handle movie deletion
-  const handleDelete = async (e) => {
-    e.preventDefault();
-    if (!deleteId) return;
-
-    // Send the request to the server
-    try {
-      await api.deleteMovie(deleteId);
-      fetchMovies();
-      setDeleteId('');
-      setError(null);
-    } catch (err) {
-      console.error('Error deleting movie:', err);
-      setError('Failed to delete movie');
     }
   };
 
@@ -148,6 +107,7 @@ const MovieManagement = () => {
     setFiles({
       mainImage: null,
       trailer: null,
+      movieFile: null,
       images: []
     });
   };
@@ -257,6 +217,7 @@ const MovieManagement = () => {
             })}
           />
         </Form.Group>
+
         <Form.Group className="mb-3">
           <Form.Label>Movie File</Form.Label>
           <Form.Control
@@ -268,6 +229,7 @@ const MovieManagement = () => {
             })}
           />
         </Form.Group>
+
         <Form.Group className="mb-3">
           <Form.Label>Additional Images</Form.Label>
           <Form.Control
@@ -285,34 +247,6 @@ const MovieManagement = () => {
           Add Movie
         </Button>
       </Form>
-
-      <h2 className="mt-4">Delete Movie</h2>
-      <Form onSubmit={handleDelete}>
-        <Form.Group className="mb-3">
-          <Form.Label>Movie ID</Form.Label>
-          <Form.Control
-            type="text"
-            value={deleteId}
-            onChange={(e) => setDeleteId(e.target.value)}
-            placeholder="Enter movie ID to delete"
-            required
-          />
-        </Form.Group>
-        <Button variant="danger" type="submit">
-          Delete Movie
-        </Button>
-      </Form>
-
-      <ListGroup className="mt-4">
-        {movies.map(movie => (
-          <ListGroup.Item
-            key={movie._id}
-            className="d-flex justify-content-between align-items-center"
-          >
-            {movie.name} (ID: {movie._id})
-          </ListGroup.Item>
-        ))}
-      </ListGroup>
     </div>
   );
 };

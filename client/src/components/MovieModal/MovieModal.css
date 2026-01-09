@@ -84,50 +84,88 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(to bottom, transparent, #181818 95%); 
+  background: none; 
   padding: 2rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  align-items: flex-start;
   z-index: 3;
+  pointer-events: none;
 }
 
 .header-content {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 1rem !important;
+  pointer-events: auto;
+  background: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  flex-wrap: nowrap !important;
+  width: auto !important;
 }
 
 .header-content h1 {
-  font-size: 2.4rem; 
+  font-size: 2rem !important; 
   font-weight: bold;
-  margin: 0;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  margin: 0 !important;
+  padding: 0 !important;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.95);
+  background: none !important;
+  box-shadow: none;
+  white-space: nowrap;
+  display: inline-block !important;
+  width: auto !important;
+  flex: 0 0 auto !important;
 }
 
-.header-buttons {
-  display: flex;
-  gap: 1rem;
-}
-
-.play-button {
-  padding: 0.5rem 1.5rem; 
-  font-size: 1rem;
-  font-weight: 600;
-  border: none;
-  border-radius: 4px;
-  background-color: #E50914;
-  color: white;
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
+.header-content .play-button {
+  padding: 0.6rem 1.5rem !important; 
+  font-size: 1rem !important;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border: 2px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 6px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15)) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: white !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.6rem !important;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 
+              inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-.play-button:hover {
-  background-color: #C11119 !important;
-  transform: scale(1.05);
+.header-content .play-button svg {
+  width: 20px;
+  height: 20px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+.header-content .play-button:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.25)) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 
+              inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.header-content .play-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .modal-content-body {
@@ -184,6 +222,39 @@
   font-size: 0.9rem;
 }
 
+.recommendations-section {
+  padding: 2rem;
+  background: #181818;
+  margin-top: 2rem;
+  overflow: visible;
+  position: relative;
+  z-index: 1;
+  padding-bottom: 100px;
+}
+
+.recommendations-section h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: white;
+}
+
+.recommendations-section .loading {
+  color: #999;
+  text-align: center;
+  padding: 2rem;
+}
+
+.recommendations-section .scrollable-movie-list-container {
+  padding: 0 40px;
+  margin: 0;
+  overflow: visible;
+  position: relative;
+}
+
+.recommendations-section .movie-card-wrapper {
+  margin-bottom: 60px;
+}
+
 @media (max-width: 768px) {
   .modal-dialog {
       max-width: 100%;
@@ -202,41 +273,8 @@
       font-size: 1.8rem;
   }
 
-
   .play-button {
-      font-size: 0.9rem;
+      font-size: 0.55rem;
+      padding: 0.15rem 0.4rem;
   }
-  .recommendations-section {
-    padding: 2rem;
-    background: #181818;
-    margin-top: 2rem;
-    overflow: visible;
-    position: relative;
-    z-index: 1;
-    padding-bottom: 100px;
-  }
-  
-  .recommendations-title {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    color: white;
-  }
-  
-  .recommendations-message {
-    color: #999;
-    text-align: center;
-    padding: 1rem;
-  }
-  
-  /* Override ScrollableMovieList padding for modal */
-  .recommendations-section .scrollable-movie-list-container {
-    padding: 0 40px;
-    margin: 0;
-    overflow: visible;
-  position: relative;
-  }
-  .recommendations-section .movie-card-wrapper {
-    margin-bottom: 60px; /* Add space below cards to prevent cutoff */
-  }
-  
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Modal } from 'react-bootstrap';
 import { api } from '../../services/api';
 import ScrollableMovieList from '../Movies/ScrollableMovieList';
@@ -11,20 +11,26 @@ const MovieModal = ({ show, handleClose, movie }) => {
   const [error, setError] = useState(null);
   const [hasRecommendations, setHasRecommendations] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
+  const lastFetchedMovieId = useRef(null);
 
   useEffect(() => {
-    if (show && movie?._id) {
+    if (show && movie?._id && lastFetchedMovieId.current !== movie._id) {
+      lastFetchedMovieId.current = movie._id;
       fetchRecommendations();
     }
-  }, [show, movie]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [show, movie?._id]);
 
   const fetchRecommendations = async () => {
     try {
       setLoading(true);
       const response = await api.getRecommendations(movie._id);
       
-      if (response.data && Array.isArray(response.data) && response.data.length > 0) {
-        setRecommendations(response.data);
+      // Backend returns { movies: [...] }
+      const movies = response.data?.movies || response.data;
+      
+      if (movies && Array.isArray(movies) && movies.length > 0) {
+        setRecommendations(movies);
         setHasRecommendations(true);
       } else {
         setHasRecommendations(false);
@@ -107,25 +113,23 @@ const MovieModal = ({ show, handleClose, movie }) => {
               <button className="close-button" onClick={handleClose}>×</button>
               <div className="header-content">
                 <h1>{movie.name}</h1>
-                <div className="header-buttons">
-                  <button className="play-button" onClick={handlePlayClick}>
-                    <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M4 2.69127C4 1.93067 4.81547 1.44851 5.48192 1.81506L22.4069 11.1238C23.0977 11.5037 23.0977 12.4963 22.4069 12.8762L5.48192 22.1849C4.81546 22.5515 4 22.0693 4 21.3087V2.69127Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    Play
-                  </button>
-                  {error && <div className={`error-toast ${error ? 'show' : ''}`}>{error}</div>}
-                </div>
+                <button className="play-button" onClick={handlePlayClick}>
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M4 2.69127C4 1.93067 4.81547 1.44851 5.48192 1.81506L22.4069 11.1238C23.0977 11.5037 23.0977 12.4963 22.4069 12.8762L5.48192 22.1849C4.81546 22.5515 4 22.0693 4 21.3087V2.69127Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                  Play
+                </button>
               </div>
+              {error && <div className={`error-toast ${error ? 'show' : ''}`}>{error}</div>}
             </div>
           </div>
 

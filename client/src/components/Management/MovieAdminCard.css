@@ -1,0 +1,61 @@
+.movie-admin-card {
+  transition: transform 0.2s ease;
+  border: 1px solid #404040;
+  background: #2a2a2a;
+  max-width: 200px;
+  width: 100%;
+}
+
+.movie-admin-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(229, 9, 20, 0.3);
+}
+
+.movie-admin-image-container {
+  height: 120px;
+  overflow: hidden;
+  border-radius: 4px 4px 0 0;
+}
+
+.movie-admin-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.movie-admin-title {
+  color: white;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+  line-height: 1.2;
+}
+
+.movie-admin-info {
+  color: #888;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.movie-admin-card .btn {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+}
+
+/* Light mode styles */
+body.light-mode .movie-admin-card {
+  background: #ffffff;
+  border: 1px solid #dee2e6;
+}
+
+body.light-mode .movie-admin-title {
+  color: #333;
+}
+
+body.light-mode .movie-admin-info {
+  color: #666;
+}
+
+body.light-mode .movie-admin-card:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
