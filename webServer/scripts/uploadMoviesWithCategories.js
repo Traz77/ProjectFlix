@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 const API_URL = 'http://localhost:3000/api';
-const ADMIN_EMAIL = "tal@gmail.com";
+const ADMIN_EMAIL = "talraz77@gmail.com";
 const ADMIN_PASSWORD = "123456"; 
 
 // Categories to create

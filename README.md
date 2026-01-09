@@ -1,80 +1,67 @@
-## Description
+# ProjectFlix
 
-Welcome to **ProjectFlix** – a full-stack, cross-platform movie streaming application inspired by Netflix! 
+A cross-platform movie streaming platform built with modern technologies, featuring intelligent recommendation systems and multi-device support.
 
-## Overview
+## Architecture
 
-Our application architecture follows a modular and scalable workflow across multiple technologies:
+ProjectFlix implements a multi-tier architecture combining three core technologies:
 
-- C++ Recommendation Server - 
-We started by developing a C++ backend server responsible for managing users, tracking their watch history, and generating personalized movie recommendations based on user similarity and preferences.
+**C++ Recommendation Engine**  
+High-performance backend service managing user profiles, viewing history, and personalized content recommendations through advanced similarity algorithms.
 
-- Node.js Server (MVC Architecture) - 
-We then built a Node.js server using the MVC design pattern. This server handles movie and category objects, provides CRUD operations via MongoDB, and acts as a bridge between the frontend and the C++ recommendation engine.
+**Node.js API Server**  
+RESTful service layer implementing MVC architecture patterns, handling data persistence through MongoDB, and serving as the communication bridge between clients and the recommendation engine.
 
-- Cross-Platform Clients: React Web App & Android App - 
-Finally, we developed two client interfaces: a React-based web frontend and a native Android application, allowing users to seamlessly access the platform across devices.
+**Multi-Platform Clients**  
+Web application built with React and native Android application providing consistent user experiences across desktop and mobile platforms.
 
-Feel free to explore [Wiki](wiki/) for detailed documentation and screenshots.
+Additional documentation and screenshots available in the [Wiki](wiki/) directory.
 
-## 🗂️ Project Structure
+## Project Structure
 ```
 ProjectFlix/
 ├── client/                              # React web application 
-│   ├── public/                          # Static assets
-│   ├── src/                             # React source code
-│   │   ├── components/                  # UI components
-│   │   │   ├── Movies/                  # Movie-related components
-│   │   │   ├── ScrollableMovieCard/     # Recommended movies card
-│   │   │   ├── MovieModal/              # Movie details modal
-│   │   │   ├── Auth/                    # Authentication components
-│   │   │   └── ...                      # Other components
-│   │   ├── services/                    # API communication
-│   │   │   └── api.js                   # HTTP client and API methods
-│   │   └── App.js                       # Main app component
-│   └── package.json                     # Dependencies and scripts
+│   ├── src/                             
+│   │   ├── components/                  
+│   │   ├── services/   
+│   │   └── ...            
 ├── webServer/                           # Node.js backend server (MVC)
-│   ├── controllers/                     # Request handlers
+│   ├── controllers/                     
 │   │   ├── UserController.js            # User operations
 │   │   ├── MovieController.js           # Movie management
 │   │   ├── RecommendationController.js  # C++ engine integration
-│   │   └── ...                          # Other controllers
-│   ├── models/                          # Database schemas (MongoDB)
-│   │   ├── UserModel.js                 # User data model
-│   │   ├── MovieModel.js                # Movie data model
-│   │   └── ...                          # Other models
+│   │   └── ...                          
+│   ├── models/                          # Database schemas
+│   │   ├── UserModel.js                 
+│   │   ├── MovieModel.js                
+│   │   └── ...                          
 │   ├── routes/                          # API endpoints
-│   │   ├── UserRoutes.js                # User API routes
-│   │   ├── MovieRoute.js                # Movie API routes
-│   │   └── ...                          # Other routes
+│   │   ├── UserRoutes.js                
+│   │   ├── MovieRoute.js                
+│   │   └── ...                          
 │   ├── middlewares/                     # Express middleware
 │   │   ├── auth.js                      # Authentication middleware
 │   │   └── upload.js                    # File upload handling
-│   ├── services/                        # Business logic
-│   │   ├── UserServices.js              # User operations
-│   │   ├── MovieService.js              # Movie management
+│   ├── services/                       
+│   │   ├── UserServices.js              
+│   │   ├── MovieService.js              
 │   │   ├── RecommendationService.js     # C++ engine integration
-│   │   └── ...                          # Other services
+│   │   └── ...                          
 │   ├── config/                          # Configuration files
-│   │   └── .env.local                   # Environment variables (create this)
-│   ├── static/                          # Static file storage
+│   │   └── .env.local                   # Environment variables (create this - read instructions below)
 │   └── app.js                           # Express application
 ├── src/                                 # C++ recommendation engine
-│   ├── main.cpp                         # TCP server entry point
-│   ├── UserManager.cpp                  # User data management
-│   ├── MovieRecommender.cpp             # Recommendation algorithms
-│   ├── DatabaseManager.cpp              # Data persistence
-│   └── ...                              # Other C++ source files
+│   ├── main.cpp                         
+│   ├── MovieRecommender.cpp             # Recommendation algorithm
+│   ├── TCPServer.cpp                    # TCP server entry point
+│   ├── ThreadPoolManager.cpp            
+│   └── ...                              
 ├── headers/                             # C++ header files
-│   ├── User.h
-│   ├── TCPServer.h
-│   └── ...                              # Other header files
 ├── tests/                               # C++ unit tests
-│   ├── User.cpp
-│   ├── Recommend.cpp
-│   ├── TCPServer.cpp
+│   ├── UserManagerTest.cpp
+│   ├── RecommendationTest.cpp
+│   ├── ServerMenuTest.cpp
 │   └── ...                              # Other test files
-├── data/                                # Recommendation engine data
 ├── wiki/                                # Project documentation
 ├── docker-compose.yml                   # Multi-container orchestration
 ├── Dockerfile.client                    # React frontend container
@@ -82,132 +69,123 @@ ProjectFlix/
 └── README.md                            # Project documentation
 ```
 
-### Key Components:
+### Technology Stack
 
-- **C++ Backend**: Recommendation engine and core business logic
-- **Node.js Server**: REST API and database operations
-- **React Frontend**: Web user interface
-- **Android App**: Native mobile interface
-- **Docker**: Containerization and deployment
-- **MongoDB**: Data persistence
+- **Backend Services**: Node.js API server with MongoDB persistence
+- **Recommendation Engine**: C++ service for content analysis and user profiling
+- **Web Client**: React-based frontend application
+- **Mobile Client**: Native Android application
+- **Infrastructure**: Docker containerization and orchestration
+- **Database**: MongoDB for data storage and management
 
-### Architecture Overview:
+### System Components
 
-1. **Backend Layer**:
-   - Node.js REST API
-   - MongoDB integration
-   - Authentication/Authorization - JWT
-   - File handling
+**API Layer**
+- RESTful endpoints for client communication
+- JWT-based authentication and authorization
+- File upload and media handling
+- Database abstraction and CRUD operations
 
-3. **Recommendation Engine**:
-   - C++ core logic
-   - User similarity analysis
-   - Watch history processing
-   - Movie recommendations
+**Recommendation Service**
+- User behavior analysis and pattern recognition
+- Content similarity algorithms
+- Personalized recommendation generation
+- Real-time preference learning
 
-3. **Frontend Layer**:
-   - React web application
-   - Android native app
-   - User interface components
-   - State management
+**Client Applications**
+- Responsive web interface with modern UI components
+- Native Android application with platform-specific optimizations
+- Cross-platform state management and API integration
 
-## Getting Started
+## Installation and Setup
 
-### 1. Clone the Repository
+### Prerequisites
+- Docker and Docker Compose
+- Git
+- Android Studio (for mobile development)
 
-```sh
-git clone https://github.com/Traz77/ProjectFlix.git
+### Initial Setup
+
+**1. Repository Setup**
+```bash
+git clone https://github.com/omrinahum/ProjectFlix.git
+cd ProjectFlix
 ```
 
-### 2. Configure Environment
-
-Create a config folder and `.env.local` file for the backend:
-
-```sh
+**2. Environment Configuration**
+Create the configuration directory and environment file:
+```bash
 mkdir -p webServer/config
-touch webServer/config/.env.local
 ```
 
-Add the following to `webServer/config/.env.local` (replace `XXXX` as needed):
-
+Create `webServer/config/.env.local` with the following configuration:
 ```env
-PORT=XXXX                  # Node.js server port (e.g., 3000)
-REACT_APP_API_URL=http://localhost:XXXX/
-RECOMMENDATION_PORT=XXXX   # C++ server port (e.g., 5555)
-FRONTEND_PORT=XXXX         # React frontend port (e.g., 3001)
+PORT=3000
+REACT_APP_API_URL=http://localhost:3000/
+RECOMMENDATION_PORT=5555
+FRONTEND_PORT=3001
 CONNECTION_STRING=mongodb://host.docker.internal:27017
-JWT_SECRET=XXXX            # Generate with: node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+JWT_SECRET=your_jwt_secret_here
 ```
 
-Using docker commands (in the the main folder): 
+Generate a secure JWT secret:
+```bash
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
 
-### 3. Run with Docker (in the the main folder aka PROJECTFLIX):
+### Deployment
 
-**Build containers:**
+**Build Application**
+```bash
+# Windows PowerShell
+docker-compose --env-file .\webServer\config\.env.local build
 
-- PowerShell:
-  ```sh
-  docker-compose --env-file .\webServer\config\.env.local build
-  ```
-- Unix/Mac:
-  ```sh
-  docker-compose --env-file ./webServer/config/.env.local build
-  ```
+# Unix/Linux/macOS
+docker-compose --env-file ./webServer/config/.env.local build
+```
 
-**Start services:**
+**Start Services**
+```bash
+# Windows PowerShell
+docker-compose --env-file .\webServer\config\.env.local up -d
 
-- PowerShell:
-  ```sh
-  docker-compose --env-file .\webServer\config\.env.local up -d
-  ```
-- Unix/Mac:
-  ```sh
-  docker-compose --env-file ./webServer/config/.env.local up -d
-  ```
+# Unix/Linux/macOS
+docker-compose --env-file ./webServer/config/.env.local up -d
+```
 
----
-### 4. Run C++ Server Tests (if you want)
+### Testing
 
-```sh
+**Run C++ Backend Tests**
+```bash
 docker-compose --env-file ./webServer/config/.env.local run --rm cpp_server ./runTests
 ```
 
----
+### Administrative Access
 
-### 5. Make Yourself Admin (if you want)
-
-```sh
+To grant administrative privileges:
+```bash
 docker exec -it mongo mongosh
-# In the MongoDB shell:
-db.users.updateOne({ email: "YOUR_EMAIL@example.com" }, { $set: { role: "admin" } })
 ```
 
----
-## 🌐 Access the App
+In the MongoDB shell:
+```javascript
+db.users.updateOne({ email: "YOUR_EMAIL" }, { $set: { role: "admin" } })
+```
 
-- **Frontend:** [http://localhost:XXXX/login](http://localhost:XXXX/login) (replace XXXX with your frontend port)
+## Application Access
 
----
+**Web Application**: http://localhost:3001/login  
+Replace port number with your configured FRONTEND_PORT value.
 
-To run the android app: 
+## Android Development
 
-On android studio
-
-Press File -> New -> Project From Version Control -> Insert the URL https://github.com/Traz77/ProjectFlix.git
-
-Then Press File -> Open -> choose android -> Sync with Gradle, use R language and run 
-
-## 📱 Android App
-
+### Setup Instructions
 1. Open Android Studio
-2. File → New → Project from Version Control → Paste repo URL
-3. File → Open → Select `android/` → Sync with Gradle
-4. Update `android/res/values/strings.xml` if you change backend port (`api_url`)
-5. Run the app
+2. Select "New Project from Version Control"
+3. Enter repository URL: https://github.com/omrinahum/ProjectFlix.git
+4. Navigate to File > Open and select the `android/` directory
+5. Sync project with Gradle files
+6. Configure API endpoint in `android/res/values/strings.xml` (default: http://10.0.2.2:3000/api/)
+7. Build and run the application
 
-- Please Note - The base url of the android port is 3000 (http://10.0.2.2:3000/api/) this should match the backend port. (point number 4)
-
----
-
-
-Enjoy streaming with ProjectFlix! 🎬🍿
+**Note**: Ensure the Android API URL matches your backend server port configuration.
