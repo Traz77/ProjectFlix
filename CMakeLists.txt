@@ -5,6 +5,12 @@ project(my_project)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+option(ENABLE_COVERAGE "Enable coverage" ON)
+if(ENABLE_COVERAGE)
+    add_compile_options(--coverage)
+    add_link_options(--coverage)
+endif()
+
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -89,3 +95,6 @@ enable_testing()
 include(GoogleTest)
 add_test(NAME RunTests COMMAND tests)
 gtest_discover_tests(runTests)
+
+add_executable(benchmark tests/PerformanceTest.cpp)
+target_link_libraries(benchmark pthread) 

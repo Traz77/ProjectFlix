@@ -31,8 +31,8 @@ void TCPServer::start() {
         throw std::runtime_error("Listen failed");
     }
 
-    // Create ThreadPoolManager with 4 threads
-    ThreadPoolManager threadManager(4);
+    // Create ThreadPoolManager with 50 threads
+    ThreadPoolManager threadManager(50);
 
     // Pass the thread manager to acceptClients
     acceptClients(serverSocket, &threadManager);

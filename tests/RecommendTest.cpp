@@ -76,7 +76,6 @@ TEST(RecommendTest, ExecuteWithValidInput) {
     // Create a Recommend object
     Recommend recommend;
 
-    // Use std::ostringstream instead of std::cout for flexibility
     std::ostringstream outputStream;
 
     // Execute the recommendation
@@ -112,6 +111,148 @@ TEST(RecommendTest, ExecuteWithNonExistentMovie) {
     recommend.execute(args, outputStream);
 
     // Verify that the output is empty or an appropriate message (depending on implementation)
-    std::string expectedOutput = ""; // Adjust this if an error message is expected
+    std::string expectedOutput = ""; 
     ASSERT_EQ(outputStream.str(), expectedOutput);
 }
+
+// Test: User with no history
+TEST(RecommendTest, ExecuteWithUserNoHistory) {
+    Data& testData = Data::getInstance();
+    testData.clear();
+
+    Movie movie("100", {});
+    Movie movie2("101", {});
+    testData.addMovie(movie);
+    testData.addMovie(movie2);
+
+    User user1("1", {}); // User watched nothing
+    testData.addUser(user1);
+    
+    // Other user who watched the target movie
+    User user2("2", {movie, movie2});
+    testData.addUser(user2);
+
+    Recommend recommend;
+    std::ostringstream outputStream;
+
+    // Recommend based on movie "100" for user "1"
+    // Since user 1 watched nothing, they have no common movies with anyone, so no recommendations should be generated
+    std::vector<std::string> args = {"1", "100"};
+    recommend.execute(args, outputStream);
+
+    ASSERT_EQ(outputStream.str(), "");
+}
+
+// Test: Target movie not watched by anyone except possibly the requester (who shouldn't be counted for self-match)
+TEST(RecommendTest, ExecuteWithMovieNotWatchedByOthers) {
+    Data& testData = Data::getInstance();
+    testData.clear();
+
+    Movie movie("100", {});
+    testData.addMovie(movie);
+    
+    // Target user watched something else
+    User user1("1", {movie}); 
+    testData.addUser(user1);
+
+    // Other users watched other things but NOT movie "100"
+    User user2("2", {});
+    testData.addUser(user2);
+
+    Recommend recommend;
+    std::ostringstream outputStream;
+
+    std::vector<std::string> args = {"1", "100"};
+    recommend.execute(args, outputStream);
+
+    ASSERT_EQ(outputStream.str(), "");
+}
+
+// Test: Tie-breaking logic (Sort by weight desc, then ID asc)
+TEST(RecommendTest, ExecuteWithTieBreaking) {
+    Data& testData = Data::getInstance();
+    testData.clear();
+    
+    Movie target("100", {});
+    Movie rec1("200", {}); // Weight 1
+    Movie rec2("150", {}); // Weight 1
+    testData.addMovie(target);
+    testData.addMovie(rec1);
+    testData.addMovie(rec2);
+
+    User user1("1", {rec1}); // Only watched rec1, but wants recs based on target
+    
+    User other1("2", {target, rec1});
+    
+    Movie common("99", {});
+    testData.addMovie(common);
+    
+    user1 = User("1", {common});
+    testData.addUser(user1);
+    
+    other1 = User("2", {common, target, rec1});
+    testData.addUser(other1);
+    
+    User other2("3", {common, target, rec2});
+    testData.addUser(other2);
+
+    Recommend recommend;
+    std::ostringstream outputStream;
+
+    std::vector<std::string> args = {"1", "100"};
+    recommend.execute(args, outputStream);
+    
+    // Both Rec1 ("200") and Rec2 ("150") have score 1 (from common movie "99").
+    // Sorting: Score descending (tie). Then ID ascending.
+    // "150" < "200". So "150" should come first.
+    std::string expectedOutput = "150 200\n"; 
+    ASSERT_EQ(outputStream.str(), expectedOutput);
+}
+
+// Test: Recommendation with large dataset (Simulated)
+TEST(RecommendTest, ExecuteWithLargeDataset) {
+    Data& testData = Data::getInstance();
+    testData.clear();
+
+    Movie target("100", {});
+    testData.addMovie(target);
+    
+    int numUsers = 1000;
+    std::vector<Movie> allMovies;
+    for(int i=0; i<100; ++i) {
+        std::string id = std::to_string(200 + i);
+        allMovies.emplace_back(id, std::vector<User>{});
+        testData.addMovie(allMovies.back());
+    }
+
+    // Interested user watched first 10 movies
+    std::vector<Movie> watched1;
+    for(int i=0; i<10; ++i) watched1.push_back(allMovies[i]);
+    User user1("1", watched1);
+    testData.addUser(user1);
+
+    // Create many users who watched target + some overlapping movies
+    for(int i=0; i<numUsers; ++i) {
+        std::vector<Movie> watched;
+        watched.push_back(target);
+        // Each user watches a random subset of movies, ensuring some overlap
+        for(int j=0; j<5; ++j) {
+            watched.push_back(allMovies[(i + j) % 100]);
+        }
+        User u(std::to_string(2 + i), watched);
+        testData.addUser(u);
+    }
+
+    Recommend recommend;
+    std::ostringstream outputStream;
+    
+    auto start = std::chrono::high_resolution_clock::now();
+    std::vector<std::string> args = {"1", "100"};
+    recommend.execute(args, outputStream);
+    auto end = std::chrono::high_resolution_clock::now();
+    
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    EXPECT_LT(duration, 1000);
+    EXPECT_FALSE(outputStream.str().empty());
+}
+

@@ -77,3 +77,24 @@ TEST_F(TCPServerTest, StartAndStop) {
         serverThread.join();
     }
 }
+// Test Bind Failure
+TEST_F(TCPServerTest, BindFailure) {
+    // Start a server on port 8082
+    TCPServer server1(8082);
+    std::thread t1([&server1]() {
+        server1.start();
+    });
+    
+    // Wait for it to start
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    // Try to start another server on the same port
+    TCPServer server2(8082);
+    EXPECT_THROW(server2.start(), std::runtime_error);
+
+    // Cleanup
+    server1.stop();
+    if (t1.joinable()) {
+        t1.join();
+    }
+}

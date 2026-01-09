@@ -3,6 +3,7 @@
 
 #include "User.h"  
 #include "Movie.h"
+#include <shared_mutex>
 #include <mutex>
 #include <vector>
 #include <string> 
@@ -13,7 +14,7 @@ class Data {
 private:
     std::vector<User> users;   
     std::vector<Movie> movies;  
-    mutable std::mutex dataMutex; // Mutex to protect the data - mutable because it is modified in const methods
+    mutable std::shared_timed_mutex dataMutex; // Mutex to protect the data
     Data() {}                  
 
 public:

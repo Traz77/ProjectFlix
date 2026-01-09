@@ -1,8 +1,8 @@
 const axios = require('axios');
 
 const API_URL = 'http://localhost:3000/api';
-const ADMIN_EMAIL = "talraz77@gmail.com";
-const ADMIN_PASSWORD = "123456"; 
+const ADMIN_EMAIL = "tal@gmail.com";
+const ADMIN_PASSWORD = "123456";
 
 // Categories to create
 const categoriesToCreate = [
@@ -377,11 +377,11 @@ async function createMovie(movieInfo, token, categoryMap) {
       mainImage: movieInfo.mainImage || '',
       movieFile: movieInfo.movieFile || ''
     };
-    
+
     if (movieInfo.trailer) {
       data.trailer = movieInfo.trailer;
     }
-    
+
     // Map category names to IDs
     const movieCategories = movieInfo.categories
       .map(categoryName => {
@@ -389,17 +389,17 @@ async function createMovie(movieInfo, token, categoryMap) {
         return category ? { categoryId: category._id } : null;
       })
       .filter(Boolean);
-    
+
     data.categories = JSON.stringify(movieCategories);
 
     // Use the new script endpoint
     const response = await axios.post(`${API_URL}/movies/script`, data, {
-      headers: { 
+      headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
       }
     });
-    
+
     console.log(`✅ Created movie: ${movieInfo.name} (Categories: ${movieInfo.categories.join(', ')})`);
     return response.data;
   } catch (error) {
@@ -413,10 +413,10 @@ async function main() {
   try {
     console.log('🔐 Getting admin token...');
     const token = await getAdminToken();
-    
+
     console.log('📁 Creating categories...');
     const createdCategories = [];
-    
+
     for (const categoryData of categoriesToCreate) {
       try {
         const category = await createCategory(categoryData, token);
@@ -429,18 +429,18 @@ async function main() {
         continue;
       }
     }
-    
+
     console.log('📋 Fetching all categories...');
     const allCategories = await getCategories(token);
-    
+
     // Create category name to object mapping
     const categoryMap = {};
     allCategories.forEach(category => {
       categoryMap[category.name] = category;
     });
-    
+
     console.log(`📽️ Starting to upload ${movieData.length} movies...`);
-    
+
     for (let i = 0; i < movieData.length; i++) {
       try {
         await createMovie(movieData[i], token, categoryMap);
@@ -450,13 +450,13 @@ async function main() {
         continue;
       }
     }
-    
+
     console.log('🎉 Upload completed!');
     console.log('\n📊 Summary:');
     console.log(`Categories created: ${categoriesToCreate.length}`);
     console.log(`Movies uploaded: ${movieData.length}`);
     console.log('\n🎬 Your ProjectFlix database is now populated with movies and categories!');
-    
+
   } catch (error) {
     console.error('❌ Script failed:', error.message);
   }

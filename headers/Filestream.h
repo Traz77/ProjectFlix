@@ -5,6 +5,7 @@
 #include "Movie.h"
 #include "Data.h"
 #include "Add.h"
+#include <shared_mutex>
 #include <mutex>
 #include <IStreamable.h>
 #include <fstream>
@@ -15,7 +16,11 @@
 class FileStream : public IStreamable {
 private:
     std::string filename;
-    std::mutex fileMutex;
+    std::shared_timed_mutex fileMutex;
+    
+    // Internal helpers (no locks)
+    std::vector<User> read_impl();
+    void updateMovies_impl(const User& updatedUser, std::vector<Movie> updatedMovies);
 
 public:
     // Default constructor

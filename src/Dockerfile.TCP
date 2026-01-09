@@ -5,6 +5,7 @@ FROM gcc:latest
 RUN apt-get update && apt-get install -y \
     cmake \
     build-essential \
+    lcov \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory

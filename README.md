@@ -160,6 +160,16 @@ docker-compose --env-file ./webServer/config/.env.local up -d
 docker-compose --env-file ./webServer/config/.env.local run --rm cpp_server ./runTests
 ```
 
+**Run Performance Benchmark**
+```bash
+docker-compose --env-file ./webServer/config/.env.local exec cpp_server /usr/src/myapp/data/benchmark 1000000
+```
+
+**Generate Coverage Report**
+```bash
+docker-compose --env-file ./webServer/config/.env.local exec cpp_server lcov --extract coverage.info '/usr/src/myapp/src/*' --output-file src_coverage.info --ignore-errors inconsistent
+```
+
 ### Administrative Access
 
 To grant administrative privileges:

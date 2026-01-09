@@ -10,8 +10,14 @@ webServer/public/videos/
 node_modules
 package-lock.json
 package.json
-/clieמt/package-lock.json
+/client/package-lock.json
 /client/package.json
 /client/node_modules
 .DS_Store
 .codegpt
+build/
+*.o
+*.a
+*.so
+.idea/
+data/benchmark

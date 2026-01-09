@@ -103,7 +103,12 @@ std::unordered_map<std::string, int> Recommend::calculateTotalRelevance(User* in
 
 void Recommend::printSortedMovieRelevance(const std::unordered_map<std::string, int>& movieRelevance, std::ostream& response) {
     // Convert the unordered_map to a vector of pairs for sorting
-    std::vector<std::pair<std::string, int>> sortedVector(movieRelevance.begin(), movieRelevance.end());
+    std::vector<std::pair<std::string, int>> sortedVector;
+    for (const auto& item : movieRelevance) {
+        if (item.second > 0) {
+            sortedVector.push_back(item);
+        }
+    }
 
     // Sort the vector by weight (descending) and by movie ID (ascending) if weights are equal
     std::sort(sortedVector.begin(), sortedVector.end(), [](const auto& a, const auto& b) {
