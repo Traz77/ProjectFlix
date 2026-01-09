@@ -2,13 +2,13 @@
 #include "ThreadPoolManager.h"
 
 // Initialize the server with the given port
-TCPServer::TCPServer(int port) : port(port), running(false) {}
+TCPServer::TCPServer(int port) : port(port), serverSocket(-1), running(false) {}
 
 void TCPServer::start() {
     running = true;
 
     // Create a socket for the server
-    int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+    serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSocket == -1) {
         throw std::runtime_error("Failed to create socket");
     }
@@ -68,5 +68,10 @@ void TCPServer::acceptClients(int serverSocket, IThreadManager* threadManager) {
 
 void TCPServer::stop() {
     running.store(false);
+    if (serverSocket != -1) {
+        shutdown(serverSocket, SHUT_RDWR);
+        close(serverSocket);
+        serverSocket = -1;
+    }
 }
 

@@ -23,7 +23,7 @@ public:
 
 private:
     int port;
-
+    int serverSocket;
     std::mutex clientsMutex;
 
     // Accepting clients with connected to the server socker 
