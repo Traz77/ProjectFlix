@@ -45,10 +45,6 @@ const VideoPlayer = ({ show, handleClose, videoPath, movieName }) => {
   const isYouTube = isYouTubeUrl(videoPath);
   const videoUrl = isYouTube ? getYouTubeEmbedUrl(videoPath) : getLocalVideoUrl(videoPath);
 
-  console.log('Video path:', videoPath);
-  console.log('Is YouTube:', isYouTube);
-  console.log('Final URL:', videoUrl);
-
   return (
     <Modal show={show} onHide={handleClose} size="xl" centered className="video-modal">
       <Modal.Header closeButton>
