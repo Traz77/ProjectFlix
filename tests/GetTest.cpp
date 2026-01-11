@@ -52,8 +52,8 @@ TEST_F(GetTest, ExecuteValidInput) {
     // Execute Get
     get1.execute(commands, outputStream);
 
-    // Verify the response
-    std::string expectedOutput = "200 OK\n\n102 103 104 105\n";
+    // Verify the response: "200 OK\n" from Get + recommendations + "\n" from Recommend
+    std::string expectedOutput = "200 OK\n102 103 104 105\n";
     EXPECT_EQ(outputStream.str(), expectedOutput);
 }
 

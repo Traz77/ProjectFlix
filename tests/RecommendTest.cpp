@@ -110,7 +110,7 @@ TEST(RecommendTest, ExecuteWithNonExistentMovie) {
     std::vector<std::string> args = {"1", "999"};
     recommend.execute(args, outputStream);
 
-    // Verify that the output is empty or an appropriate message (depending on implementation)
+    // Verify that the output is empty (Recommend returns early if movie not found)
     std::string expectedOutput = ""; 
     ASSERT_EQ(outputStream.str(), expectedOutput);
 }
@@ -140,7 +140,9 @@ TEST(RecommendTest, ExecuteWithUserNoHistory) {
     std::vector<std::string> args = {"1", "100"};
     recommend.execute(args, outputStream);
 
-    ASSERT_EQ(outputStream.str(), "");
+    // User 1 watched nothing, so no common movies with anyone = no recommendations
+    // Output is just newline (for Node.js protocol consistency)
+    ASSERT_EQ(outputStream.str(), "\n");
 }
 
 // Test: Target movie not watched by anyone except possibly the requester (who shouldn't be counted for self-match)
@@ -165,7 +167,7 @@ TEST(RecommendTest, ExecuteWithMovieNotWatchedByOthers) {
     std::vector<std::string> args = {"1", "100"};
     recommend.execute(args, outputStream);
 
-    ASSERT_EQ(outputStream.str(), "");
+    ASSERT_EQ(outputStream.str(), "\n"); // Empty but with newline for protocol
 }
 
 // Test: Tie-breaking logic (Sort by weight desc, then ID asc)

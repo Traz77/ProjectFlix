@@ -45,8 +45,10 @@ std::vector<std::pair<User, int>> Recommend::calculateCommonMovies(User* interes
             // Calculate the count of common movies between `interestedUser` and `otherUser`
             int commonCount = calculateCommonCount(interestedMovies, otherMovies);
 
-            // Add the result to the table
-            table.emplace_back(otherUser, commonCount);
+            // Only add users with at least 1 common movie - they provide relevance
+            if (commonCount > 0) {
+                table.emplace_back(otherUser, commonCount);
+            }
         }
     }
 
@@ -103,12 +105,7 @@ std::unordered_map<std::string, int> Recommend::calculateTotalRelevance(User* in
 
 void Recommend::printSortedMovieRelevance(const std::unordered_map<std::string, int>& movieRelevance, std::ostream& response) {
     // Convert the unordered_map to a vector of pairs for sorting
-    std::vector<std::pair<std::string, int>> sortedVector;
-    for (const auto& item : movieRelevance) {
-        if (item.second > 0) {
-            sortedVector.push_back(item);
-        }
-    }
+    std::vector<std::pair<std::string, int>> sortedVector(movieRelevance.begin(), movieRelevance.end());
 
     // Sort the vector by weight (descending) and by movie ID (ascending) if weights are equal
     std::sort(sortedVector.begin(), sortedVector.end(), [](const auto& a, const auto& b) {
@@ -127,9 +124,8 @@ void Recommend::printSortedMovieRelevance(const std::unordered_map<std::string, 
             response << " ";
         }
     }
-    if (!sortedVector.empty()) {
-        response << "\n";
-    }
+    // Always output newline - this signals end of response to Node.js client
+    response << "\n";
 }
 
 

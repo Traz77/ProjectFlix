@@ -118,6 +118,11 @@ Create the configuration directory and environment file:
 mkdir -p webServer/config
 ```
 
+Generate a secure JWT secret:
+```bash
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
+
 Create `webServer/config/.env.local` with the following configuration:
 ```env
 PORT=3000
@@ -126,11 +131,6 @@ RECOMMENDATION_PORT=5555
 FRONTEND_PORT=3001
 CONNECTION_STRING=mongodb://host.docker.internal:27017
 JWT_SECRET=your_jwt_secret_here
-```
-
-Generate a secure JWT secret:
-```bash
-node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 ```
 
 ### Deployment
@@ -152,9 +152,7 @@ docker-compose --env-file .\webServer\config\.env.local up -d
 # Unix/Linux/macOS
 docker-compose --env-file ./webServer/config/.env.local up -d
 ```
-
 ### Testing
-
 **Run C++ Backend Tests**
 ```bash
 docker-compose --env-file ./webServer/config/.env.local run --rm cpp_server ./runTests
@@ -167,7 +165,7 @@ docker-compose --env-file ./webServer/config/.env.local exec cpp_server /usr/src
 
 **Generate Coverage Report**
 ```bash
-docker-compose --env-file ./webServer/config/.env.local exec cpp_server lcov --extract coverage.info '/usr/src/myapp/src/*' --output-file src_coverage.info --ignore-errors inconsistent
+docker-compose --env-file ./webServer/config/.env.local exec cpp_server bash -c "./runTests && lcov --capture --directory . --output-file coverage.info --ignore-errors inconsistent && lcov --extract coverage.info '/usr/src/myapp/src/*' --output-file src_coverage.info --ignore-errors inconsistent"
 ```
 
 ### Administrative Access

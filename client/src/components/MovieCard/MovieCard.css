@@ -6,7 +6,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   z-index: 1;
-  
+
 }
 
 
@@ -60,7 +60,7 @@
   pointer-events: all;
   background-color: #181818;
   transform-style: preserve-3d;
-  
+
 }
 
 .movie-card.hovered .movie-card-img {
@@ -168,7 +168,7 @@ body.light-mode .movie-card-hover .more-info {
 }
 
 body.light-mode .movie-card-hover .more-info:hover {
-  background: rgba(0, 0, 0, 0.2)  !important;
+  background: rgba(0, 0, 0, 0.2) !important;
 }
 
 .error-toast {
@@ -188,4 +188,67 @@ body.light-mode .movie-card-hover .more-info:hover {
 
 .error-toast.show {
   opacity: 1;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .movie-card {
+    width: 200px;
+    height: 115px;
+  }
+
+  .movie-preview-container {
+    height: 115px;
+  }
+}
+
+@media (max-width: 768px) {
+  .movie-card {
+    width: 160px;
+    height: 92px;
+  }
+
+  .movie-card.hovered {
+    scale: 1.1;
+  }
+
+  .movie-preview-container {
+    height: 92px;
+  }
+
+  .movie-info {
+    padding: 10px;
+  }
+
+  .movie-title {
+    font-size: 14px;
+  }
+
+  .movie-controls {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .play-button,
+  .more-info {
+    padding: 6px 12px;
+    font-size: 12px;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .movie-card {
+    width: 140px;
+    height: 80px;
+  }
+
+  .movie-preview-container {
+    height: 80px;
+  }
+
+  .movie-card.hovered {
+    scale: 1.05;
+  }
 }

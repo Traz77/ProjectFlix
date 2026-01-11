@@ -1,4 +1,3 @@
-
 version: "3.8"
 services:
   mongo:
@@ -28,7 +27,7 @@ services:
       - ./src:/usr/src/myapp/src:ro
       - ./tests:/usr/src/myapp/tests:ro
       - ./headers:/usr/src/myapp/headers:ro
-    command: ./myapp ${RECOMMENDATION_PORT}
+    command: [ "./myapp", "${RECOMMENDATION_PORT}" ]
 
   api_server:
     build:
@@ -63,7 +62,7 @@ services:
     networks:
       - shared_network
     depends_on:
-      - api_server 
+      - api_server
 
 networks:
   shared_network:

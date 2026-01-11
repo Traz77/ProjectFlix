@@ -22,7 +22,7 @@ void Get::execute(vector<string> commands, std::ostream& response) {
         return;
     }
     // Command is legal 
-    response << ("200 OK\n\n");
+    response << ("200 OK\n");
 
     // Print the recommendations 
     recommend->execute(commands, response);

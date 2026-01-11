@@ -89,7 +89,7 @@ TEST(ServerMenuTest, InvalidInput) {
     std::vector<std::string> command = menu.nextCommand();
     ASSERT_TRUE(command.empty());
 
-    std::string input2 = "POST";
+    std::string input2 = "POST\n";
     write(clientSocket, input2.c_str(), input2.size());
     std::vector<std::string> command2 = menu.nextCommand();
     ASSERT_TRUE(command2.empty());
@@ -130,7 +130,7 @@ TEST(ServerMenuTest, SendMessageToClient) {
     ServerMenu menu(serverSocket);
 
     // Simulate sending a message to the client
-    std::string message = "400 Bad Request\0"; 
+    std::string message = "400 Bad Request"; 
     menu.displayMessage(message);
 
     // Read message on client side
@@ -138,7 +138,8 @@ TEST(ServerMenuTest, SendMessageToClient) {
     int bytesRead = read(clientSocket, buffer, sizeof(buffer));
     ASSERT_GT(bytesRead, 0);
     std::string receivedMessage(buffer, bytesRead);
-    EXPECT_EQ(receivedMessage, std::string(message.c_str(),message.size()+1));
+    // sendResponse now ensures all messages end with newline for protocol consistency
+    EXPECT_EQ(receivedMessage, "400 Bad Request\n");
  
     close(serverSocket);
     close(clientSocket);
