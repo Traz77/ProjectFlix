@@ -17,44 +17,54 @@ const MoviesPage = ({ useCategories = false }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [featuredMovie, setFeaturedMovie] = useState(null);
 
-  useEffect(() => {
-    const fetchMovies = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        // If the user is not signed in redirect to login
-        if (!token) {
-          navigate('/login');
-          return;
-        }
+  const fetchData = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      // If the user is not signed in redirect to login
+      if (!token) {
+        navigate('/login');
+        return;
+      }
 
-        // Fetch movies or categories
-        const response = useCategories ? 
-          await api.getCategories() : 
-          await api.getMovies();
-        
-        setCategories(response.data);
-        
-        // Select random movie with trailer for featured section
+      // Fetch movies or categories
+      const response = useCategories ?
+        await api.getCategories() :
+        await api.getMovies();
+
+      setCategories(response.data);
+
+      // Select random movie with trailer for featured section
+      // Only set featured movie if it hasn't been set yet to avoid flickering
+      if (!featuredMovie) {
         const allMovies = response.data.flatMap(category => category.movies);
         const moviesWithTrailer = allMovies.filter(movie => movie.trailer);
         if (moviesWithTrailer.length > 0) {
           const randomIndex = Math.floor(Math.random() * moviesWithTrailer.length);
           setFeaturedMovie(moviesWithTrailer[randomIndex]);
         }
-      } catch (err) {
-        console.error('Error fetching movies:', err);
-        if (err.response?.status === 401) {
-          navigate('/login');
-        } else {
-          setError('Failed to load movies');
-        }
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (err) {
+      console.error('Error fetching movies:', err);
+      if (err.response?.status === 401) {
+        navigate('/login');
+      } else {
+        setError('Failed to load movies');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchMovies();
+  useEffect(() => {
+    fetchData();
   }, [navigate, useCategories]);
+
+  const handleMoviePlayed = async () => {
+    console.log('Movie played, refreshing list...');
+    // We want to silent refresh without showing loading state if possible, 
+    // or just standard refresh. For now, let's just recall the API.
+    await fetchData();
+  };
 
   const handleSearchResults = (movies) => {
     setSearchResults(Array.isArray(movies) ? movies : []);
@@ -73,7 +83,7 @@ const MoviesPage = ({ useCategories = false }) => {
             <h2>Search Results</h2>
             <div className="movies-row">
               {searchResults.map((movie) => (
-                <MovieCard key={movie._id} movie={movie} />
+                <MovieCard key={movie._id} movie={movie} onMoviePlay={handleMoviePlayed} />
               ))}
             </div>
           </div>
@@ -83,7 +93,7 @@ const MoviesPage = ({ useCategories = false }) => {
               <h2>{category.categoryName || category.name}</h2>
               <div className="movies-row">
                 {category.movies.map((movie) => (
-                  <MovieCard key={movie._id} movie={movie} />
+                  <MovieCard key={movie._id} movie={movie} onMoviePlay={handleMoviePlayed} />
                 ))}
               </div>
             </div>

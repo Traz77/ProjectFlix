@@ -15,20 +15,20 @@ const fs = require('fs');
 
 console.log('NODE_ENV:', process.env.NODE_ENV);
 console.log('CONNECTION_STRING:', process.env.CONNECTION_STRING);
-mongoose.connect(process.env.CONNECTION_STRING,{});
+mongoose.connect(process.env.CONNECTION_STRING, {});
+// Global error handling to debug crashes
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT EXCEPTION:', err);
+  // process.exit(1); // Optional: keep running to log more? no, usually fatal.
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('UNHANDLED REJECTION:', reason);
+});
+
 var app = express();
 
 const frontendPort = process.env.FRONTEND_PORT || '3001';
-
-app.use(express.urlencoded({ extended: true }));
-
-app.use((req, res, next) => {
-    console.log("Headers:", req.headers);
-    console.log("Body (raw):", req.rawBody);
-    console.log("Body (parsed):", req.body);
-    console.log("Content-Type:", req.headers['content-type']);
-    next(); 
-});
 
 app.use(cors({
   origin: [`http://localhost:${frontendPort}`, 'http://localhost:3001'],
@@ -38,22 +38,24 @@ app.use(cors({
   optionsSuccessStatus: 200
 }));
 
-app.use(bodyParser.urlencoded({extended : true}));
+app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
-const uploadDirs = ['videos', 'trailers', 'images'].map(dir => 
-    path.join(__dirname, 'public/uploads', dir)
-  );
+
+const uploadDirs = ['videos', 'trailers', 'images'].map(dir =>
+  path.join(__dirname, 'public/uploads', dir)
+);
 uploadDirs.forEach(dir => {
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-  });
-  // Serve static files from public directory
-  app.use('/static', express.static(path.join(__dirname, 'public/uploads'), {
-    setHeaders: (res, path, stat) => {
-      res.set('Access-Control-Allow-Origin', '*');
-      res.set('Cross-Origin-Resource-Policy', 'cross-origin');
-      res.set('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+});
+// Serve static files from public directory
+app.use('/static', express.static(path.join(__dirname, 'public/uploads'), {
+  setHeaders: (res, path, stat) => {
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+    res.set('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
   }
 }));
 
@@ -62,7 +64,7 @@ app.use('/api/movies', movie);
 app.use('/api/users', UserRoutes);
 app.use('/api/tokens', AuthRoutes);
 app.use((req, res) => {
-    res.status(404).json({ error: "Not Found" });
+  res.status(404).json({ error: "Not Found" });
 });
 
 

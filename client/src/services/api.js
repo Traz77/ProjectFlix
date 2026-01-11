@@ -12,11 +12,21 @@ axios.interceptors.request.use((config) => {
   return config;
 });
 
+// Add response interceptor to debug responses
+axios.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 // Export the API object with methods to make requests to the backend
 export const api = {
   // Authentication
   signIn: (email, password) => axios.post(`${API_URL}/tokens`, { email, password }),
-  
+
   // Get The Movies List including the user's watch history
   getMovies: () => axios.get(`${API_URL}/movies`),
   // Get a single movie by ID
@@ -35,7 +45,7 @@ export const api = {
       }],
       onUploadProgress: (progressEvent) => {
         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-        console.log('Upload Progress:', percentCompleted, '%');
+
       }
     });
   },
@@ -51,20 +61,20 @@ export const api = {
   },
   // Delete a movie by ID
   deleteMovie: (id) => axios.delete(`${API_URL}/movies/${id}`),
-  
+
   // Categories
   getCategories: () => axios.get(`${API_URL}/categories`),
   createCategory: (categoryData) => axios.post(`${API_URL}/categories`, categoryData),
   updateCategory: (id, categoryData) => axios.patch(`${API_URL}/categories/${id}`, categoryData),
   deleteCategory: (id) => axios.delete(`${API_URL}/categories/${id}`),
-  
+
   // Recommendations
   getRecommendations: (movieId) => axios.get(`${API_URL}/movies/${movieId}/recommend`),
   postRecommendation: (movieId) => axios.post(`${API_URL}/movies/${movieId}/recommend`),
 
   // Movies
   searchMovies: (query) => axios.get(`${API_URL}/movies/search/${query}`),
- 
+
   // Users
   createUser: (userData) => axios.post(`${API_URL}/users`, userData),
   getWatchHistory: () => axios.get(`${API_URL}/users/history`),

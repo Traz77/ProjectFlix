@@ -4,8 +4,9 @@ const UserServices = require('../services/UserServices');
 
 const getRecommendations = async (req, res) => {
     try {
-        const userId = req.userId; 
-        const movieId = req.params.id; 
+        const userId = req.userId;
+        const movieId = req.params.id;
+        console.log(`[DEBUG] Controller: getRecommendations. User: ${userId}, Movie: ${movieId}`);
 
         if (!movieId) {
             return res.status(400).json({ error: 'Missing required parameters' });
@@ -15,16 +16,52 @@ const getRecommendations = async (req, res) => {
         const result = await recommendationService.sendCommand(userId, movieId, 'GET');
 
         // If the result is successful, get the movies details and return them
-        if (result && result.status === 'success') {
+        // Note: Service returns { success: boolean, ... }
+        if (result && result.success) {
             // return value - the movies from the reccomendation system
             const moviesDetails = [];
+
+            // Check if we have recommendations
+            // If API returned "200 OK" but no data, result.data might be present but needs parsing.
+            // Or result.recommendations might be empty array if we handled empty line.
+
+            let recommendations = [];
+            if (result.recommendations) {
+                recommendations = result.recommendations;
+            } else if (result.data) {
+                // Parse space separated IDs
+                // "ID ID ID" or "200 OK..."
+                const parts = result.data.trim().split(/\s+/);
+                // Filter out non-numeric if needed, or assume IDs
+                parts.forEach(p => {
+                    if (!p.startsWith('200') && !p.startsWith('GET')) {
+                        recommendations.push({ movieId: p });
+                    }
+                });
+            }
+
             // For each recommendation, get the movie details (bring them back to their current NodeJs state)
-            for (const rec of result.recommendations) {
-                const movie = await MovieServices.getMovieByCustomId(rec.movieId); 
-                moviesDetails.push(movie);
+            for (const rec of recommendations) {
+                // If rec is just ID string?
+                const mId = rec.movieId || rec;
+                // handle numeric ID conversion if needed? 
+                // MovieServices.getMovieByCustomId expects numeric ID?
+                if (mId) {
+                    const movie = await MovieServices.getMovieByCustomId(mId);
+                    if (movie) moviesDetails.push(movie);
+                }
             }
             // Return the movie details
             return res.status(200).json({ movies: moviesDetails });
+        } else {
+            // Handle error from service (e.g. 404)
+            if (result && result.message) {
+                if (result.message.includes('404')) {
+                    return res.status(404).json({ error: 'No recommendations found' });
+                }
+                return res.status(400).json({ error: result.message });
+            }
+            return res.status(500).json({ error: 'Unknown error from recommendation service' });
         }
     } catch (error) {
         if (error.message === 'Movie or user not found') {
@@ -42,17 +79,17 @@ const AddMovieToRecommendations = async (req, res) => {
     try {
         const userId = req.userId;
         const movieId = req.params.id;
-        
+
         if (!movieId) {
             return res.status(400).json({ error: 'Missing required parameters' });
         }
-        
+
         //updating the user's movieWatchHistory and recommendations through the user service
-        result = await UserServices.updateUser(userId, null, null, null, null, null, [{movieId}]);
+        result = await UserServices.updateUser(userId, null, null, null, null, null, [{ movieId }]);
         if (result) {
             return res.status(204).send();
         }
-        
+
         // Return error if recommendation service didnt send a response back
         return res.status(500).json({ error: 'Invalid response from recommendation service' });
     } catch (error) {
@@ -65,4 +102,4 @@ const AddMovieToRecommendations = async (req, res) => {
         return res.status(500).json({ error: 'Internal server error' });
     }
 };
-module.exports = { getRecommendations , AddMovieToRecommendations };
+module.exports = { getRecommendations, AddMovieToRecommendations };

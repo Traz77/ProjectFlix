@@ -5,7 +5,7 @@ import VideoPlayer from '../VideoPlayer/VideoPlayer';
 import { api } from '../../services/api';
 import './MovieCard.css';
 
-const MovieCard = ({ movie }) => {
+const MovieCard = ({ movie, onMoviePlay }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
@@ -57,26 +57,38 @@ const MovieCard = ({ movie }) => {
   const handleVideoClose = () => {
     setShowVideo(false);
     setIsHovered(false);
+    // Refresh the movie list only after the video is closed
+    if (onMoviePlay) onMoviePlay();
   };
 
   // Handle the play button click
-  const handlePlayClick = async (e) => {
+  const handlePlayClick = (e) => {
     e.stopPropagation();
     try {
       // Check if the movie has a video file
-      if (movie.movieFile) {
-        // Update the watch history for the user when the play button is clicked
-        await api.postRecommendation(movie._id);
-        setError(null);
-        // Show the video player
+      if (movie.movieFile && movie.movieFile.trim() !== '') {
+        // Show the video player immediately
         setShowVideo(true);
+        setError(null);
+
+        // Update the watch history for the user in background
+        api.postRecommendation(movie._id)
+          .then(() => {
+
+            // Don't refresh here, wait until video closes
+          })
+          .catch(err => {
+            console.error('Error updating watch history:', err);
+          });
+
       } else {
-        setError('No video file available');
+        console.warn('No video file available for movie:', movie.name);
+        setError('This movie doesn\'t have a video file yet');
         setTimeout(() => setError(null), 3000);
       }
     } catch (err) {
-      console.error('Error updating watch history:', err);
-      setError('Failed to update watch history');
+      console.error('Error in play button click:', err);
+      setError('Failed to play video. Please try again.');
       setTimeout(() => setError(null), 3000);
     }
   };
@@ -150,6 +162,7 @@ const MovieCard = ({ movie }) => {
         show={showModal}
         handleClose={handleModalClose}
         movie={movie}
+        onMoviePlay={onMoviePlay}
       />
       <VideoPlayer
         show={showVideo}

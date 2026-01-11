@@ -10,17 +10,21 @@ const requireAuth = async (req, res, next) => {
 
     const token = authHeader.split(' ')[1];
     const decoded = verifyToken(token);
-    
+
     if (!decoded) {
+      console.log('[DEBUG] Auth: Invalid token');
       return res.status(401).json({ error: 'Invalid token' });
     }
 
+    // console.log('[DEBUG] Auth: Token decoded', decoded);
     const user = await UserServices.getUserById(decoded.userId);
     if (!user) {
+      console.log('[DEBUG] Auth: User not found for ID', decoded.userId);
       return res.status(401).json({ error: 'User not found' });
     }
 
     req.userId = decoded.userId;
+    console.log('[DEBUG] Auth: Success. UserID:', req.userId);
     next();
   } catch (error) {
     res.status(401).json({ error: 'Authentication failed' });
@@ -36,7 +40,7 @@ const requireAdmin = async (req, res, next) => {
 
     const token = authHeader.split(' ')[1];
     const decoded = verifyToken(token);
-    
+
     const user = await UserServices.getUserById(decoded.userId);
     if (!user) {
       return res.status(401).json({ error: 'User not found' });
@@ -53,4 +57,4 @@ const requireAdmin = async (req, res, next) => {
   }
 };
 
-module.exports = { requireAuth , requireAdmin };
+module.exports = { requireAuth, requireAdmin };

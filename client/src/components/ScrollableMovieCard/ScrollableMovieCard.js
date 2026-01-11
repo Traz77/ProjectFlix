@@ -2,11 +2,18 @@ import React, { useState } from 'react';
 import MovieModal from '../MovieModal/MovieModal';
 import './ScrollableMovieCard.css';
 
-const ScrollableMovieCard = ({ movie }) => {
+const ScrollableMovieCard = ({ movie, onMoviePlay, onMovieClick }) => {
   const [showModal, setShowModal] = useState(false);
 
   const handleClick = () => {
-    setShowModal(true);
+    // If onMovieClick is provided (we're inside a modal), call it with the movie
+    // and don't open a nested modal
+    if (onMovieClick) {
+      onMovieClick(movie);
+    } else {
+      // Otherwise open our own modal (standalone card)
+      setShowModal(true);
+    }
   };
 
   const getImageUrl = (imagePath) => {
@@ -22,22 +29,24 @@ const ScrollableMovieCard = ({ movie }) => {
 
   return (
     <>
-      <div 
+      <div
         className="scrollable-movie-card"
         onClick={handleClick}
         style={{ pointerEvents: 'auto' }}
       >
-        <img 
-          src={getImageUrl(movie.mainImage)} 
-          alt={movie.name} 
-          className="movie-card-img" 
+        <img
+          src={getImageUrl(movie.mainImage)}
+          alt={movie.name}
+          className="movie-card-img"
         />
       </div>
-      {showModal && (
-        <MovieModal 
-          show={showModal} 
-          handleClose={() => setShowModal(false)} 
+      {/* Only render nested modal if no onMovieClick callback (standalone usage) */}
+      {!onMovieClick && showModal && (
+        <MovieModal
+          show={showModal}
+          handleClose={() => setShowModal(false)}
           movie={movie}
+          onMoviePlay={onMoviePlay}
         />
       )}
     </>

@@ -3,16 +3,16 @@ import React, { useRef } from 'react';
 import ScrollableMovieCard from '../ScrollableMovieCard/ScrollableMovieCard';
 import './ScrollableMovieList.css';
 
-const ScrollableMovieList = ({ movies }) => {
+const ScrollableMovieList = ({ movies, onMoviePlay, onMovieClick }) => {
   const listRef = useRef(null);
-  
+
   const handleScroll = (direction) => {
-    const scrollAmount = 300; 
+    const scrollAmount = 300;
     if (listRef.current) {
-      const scrollLeft = direction === 'left' 
+      const scrollLeft = direction === 'left'
         ? listRef.current.scrollLeft - scrollAmount
         : listRef.current.scrollLeft + scrollAmount;
-        
+
       listRef.current.scrollTo({
         left: scrollLeft,
         behavior: 'smooth'
@@ -26,7 +26,7 @@ const ScrollableMovieList = ({ movies }) => {
       <div className="scrollable-movie-list" ref={listRef}>
         {movies.map((movie) => (
           <div key={movie._id} className="movie-card-wrapper">
-            <ScrollableMovieCard movie={movie} />
+            <ScrollableMovieCard movie={movie} onMoviePlay={onMoviePlay} onMovieClick={onMovieClick} />
           </div>
         ))}
       </div>

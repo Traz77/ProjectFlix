@@ -31,8 +31,6 @@ const createMovie = async (movieData, files) => {
         let parsedCategories;
         try {
             // Log the raw categories value for debugging
-            console.log('Raw categories:', categories);
-
             // Handle different category formats
             if (typeof categories === 'string') {
                 try {
@@ -415,6 +413,8 @@ const getMoviesList = async (userId) => {
         const watchedMovies = await watchHistoryService.getRecentWatchHistory(userId);
         result.push({
             categoryName: 'Watched Movies',
+            _id: 'watched-history-id',
+            categoryId: 'watched-history-id',
             movies: watchedMovies.map(entry => entry.movieId),
         });
 

@@ -20,8 +20,8 @@ const userSchema = new Schema({
         required: true,
         select: false
     },
-    firstName: { type: String , required: true },
-    lastName: { type: String , required: true },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
     // Every user holds an array of his watch History, and date he watched the movie at
     watchHistory: {
         type: [{
@@ -33,10 +33,10 @@ const userSchema = new Schema({
                 type: Date,
                 default: Date.now
             }
-    }],
-    default: []
+        }],
+        default: []
     },
-    photo: { type: String, default: 'default.jpg'},
+    photo: { type: String, default: 'default.jpg' },
     role: {
         type: String,
         enum: ['user', 'admin'],
@@ -49,7 +49,7 @@ const Counter = mongoose.model("Counter", new mongoose.Schema({
     seq: Number
 }));
 
-userSchema.pre("save", async function(next) {
+userSchema.pre("save", async function () {
     if (this.isNew) {
         try {
             const counter = await Counter.findOneAndUpdate(
@@ -58,13 +58,10 @@ userSchema.pre("save", async function(next) {
                 { new: true, upsert: true }
             );
             this.userId = counter.seq;
-            next();
         } catch (error) {
             console.error("Error in pre-save hook:", error);
-            next(error);
+            throw error;
         }
-    } else {
-        next();
     }
 });
 
@@ -80,7 +77,7 @@ userSchema.method("toJSON", function () {
         photo: userSchema.photo,
         watchHistory: userSchema.watchHistory.map(watch => ({
             movieId: watch.movieId._id,
-            movieName: watch.movieId.name, 
+            movieName: watch.movieId.name,
             watchedAt: watch.watchedAt
         })),
         role: userSchema.role

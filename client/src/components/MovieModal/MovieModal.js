@@ -5,7 +5,9 @@ import ScrollableMovieList from '../Movies/ScrollableMovieList';
 import VideoPlayer from '../VideoPlayer/VideoPlayer';
 import './MovieModal.css';
 
-const MovieModal = ({ show, handleClose, movie }) => {
+const MovieModal = ({ show, handleClose, movie, onMoviePlay }) => {
+  // Use internal state to track current movie (allows switching via recommendations)
+  const [currentMovie, setCurrentMovie] = useState(movie);
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -13,22 +15,29 @@ const MovieModal = ({ show, handleClose, movie }) => {
   const [showVideo, setShowVideo] = useState(false);
   const lastFetchedMovieId = useRef(null);
 
+  // Update currentMovie when prop changes (modal opened with new movie)
   useEffect(() => {
-    if (show && movie?._id && lastFetchedMovieId.current !== movie._id) {
-      lastFetchedMovieId.current = movie._id;
+    if (movie) {
+      setCurrentMovie(movie);
+    }
+  }, [movie]);
+
+  useEffect(() => {
+    if (show && currentMovie?._id && lastFetchedMovieId.current !== currentMovie._id) {
+      lastFetchedMovieId.current = currentMovie._id;
       fetchRecommendations();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [show, movie?._id]);
+  }, [show, currentMovie?._id]);
 
   const fetchRecommendations = async () => {
     try {
       setLoading(true);
-      const response = await api.getRecommendations(movie._id);
-      
+      const response = await api.getRecommendations(currentMovie._id);
+
       // Backend returns { movies: [...] }
       const movies = response.data?.movies || response.data;
-      
+
       if (movies && Array.isArray(movies) && movies.length > 0) {
         setRecommendations(movies);
         setHasRecommendations(true);
@@ -43,7 +52,15 @@ const MovieModal = ({ show, handleClose, movie }) => {
     }
   };
 
-  if (!movie) return null;
+  // Handle clicking a recommended movie - switch to that movie within this modal
+  const handleRecommendationClick = (recommendedMovie) => {
+    setCurrentMovie(recommendedMovie);
+    setRecommendations([]);
+    setHasRecommendations(false);
+    lastFetchedMovieId.current = null; // Reset to trigger new fetch
+  };
+
+  if (!currentMovie) return null;
 
   const getEmbedUrl = (url) => {
     if (!url) return '';
@@ -66,29 +83,46 @@ const MovieModal = ({ show, handleClose, movie }) => {
   };
 
   // Handle play button click
-  const handlePlayClick = async () => {
+  // Handle play button click
+  const handlePlayClick = () => {
     try {
       // Check if movie has a movie file available
-      if (movie.movieFile && movie.movieFile.length > 0) {
-        // Update watch history and show video player
-        await api.postRecommendation(movie._id);
+      if (currentMovie.movieFile && currentMovie.movieFile.trim() !== '' && currentMovie.movieFile.length > 0) {
+
+        // Show video player immediately
         setError(null);
         setShowVideo(true);
         // Close the movie modal to stop the trailer
         handleClose();
+
+        // Update watch history in background
+        api.postRecommendation(currentMovie._id)
+          .then(() => {
+
+            // Don't refresh here, wait until video closes
+          })
+          .catch(err => {
+            console.error('Error updating watch history:', err);
+            // Note: We don't interfere with the playing video even if history update fails
+          });
+
       } else {
-        setError('No video file available');
+        console.warn('No video file available for movie:', currentMovie.name);
+        setError('This movie doesn\'t have a video file yet');
         setTimeout(() => setError(null), 3000);
       }
     } catch (err) {
-      console.error('Error updating watch history:', err);
-      setError('Failed to update watch history');
+      console.error('Error in play button click:', err);
+      // Fallback
+      setError('Failed to play video. Please try again.');
       setTimeout(() => setError(null), 3000);
     }
   };
 
   const handleVideoClose = () => {
     setShowVideo(false);
+    // Refresh the movie list only after the video is closed
+    if (onMoviePlay) onMoviePlay();
     // Don't automatically reopen the modal here
   };
 
@@ -97,22 +131,22 @@ const MovieModal = ({ show, handleClose, movie }) => {
       <Modal show={show} onHide={handleClose} className="movie-modal" size="lg">
         <Modal.Body className="p-0">
           <div className="modal-header-image">
-            {movie.trailer ? (
+            {currentMovie.trailer ? (
               <iframe
-                src={getEmbedUrl(movie.trailer)}
-                title={movie.name}
+                src={getEmbedUrl(currentMovie.trailer)}
+                title={currentMovie.name}
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
                 className="movie-trailer"
               />
             ) : (
-              <img src={movie.mainImage} alt={movie.name} />
+              <img src={currentMovie.mainImage} alt={currentMovie.name} />
             )}
             <div className="modal-header-overlay">
               <button className="close-button" onClick={handleClose}>×</button>
               <div className="header-content">
-                <h1>{movie.name}</h1>
+                <h1>{currentMovie.name}</h1>
                 <button className="play-button" onClick={handlePlayClick}>
                   <svg
                     width="24"
@@ -136,21 +170,21 @@ const MovieModal = ({ show, handleClose, movie }) => {
           <div className="modal-content-body">
             <div className="modal-info">
               <div className="meta-data">
-                <span className="year">{movie.year}</span>
-                <span className="duration">{movie.duration}m</span>
+                <span className="year">{currentMovie.year}</span>
+                <span className="duration">{currentMovie.duration}m</span>
                 <span className="quality">HD</span>
               </div>
-              <p className="description">{movie.description}</p>
+              <p className="description">{currentMovie.description}</p>
             </div>
             <div className="modal-details">
               <p>
-                <span>Director:</span> {movie.director}
+                <span>Director:</span> {currentMovie.director}
               </p>
               <p>
-                <span>Cast:</span> {movie.cast?.join(', ')}
+                <span>Cast:</span> {currentMovie.cast?.join(', ')}
               </p>
               <p>
-                <span>Categories:</span> {movie.categories?.join(', ')}
+                <span>Categories:</span> {currentMovie.categories?.join(', ')}
               </p>
             </div>
           </div>
@@ -161,19 +195,19 @@ const MovieModal = ({ show, handleClose, movie }) => {
               {loading ? (
                 <div className="loading">Loading recommendations...</div>
               ) : (
-                <ScrollableMovieList movies={recommendations} />
+                <ScrollableMovieList movies={recommendations} onMoviePlay={onMoviePlay} onMovieClick={handleRecommendationClick} />
               )}
             </div>
           )}
         </Modal.Body>
       </Modal>
-      
+
       {/* VideoPlayer should be outside the main modal */}
       <VideoPlayer
         show={showVideo}
         handleClose={handleVideoClose}
-        videoPath={movie.movieFile}
-        movieName={movie.name}
+        videoPath={currentMovie.movieFile}
+        movieName={currentMovie.name}
       />
     </>
   );
