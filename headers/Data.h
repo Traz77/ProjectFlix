@@ -34,11 +34,11 @@ public:
     // Add a movie
     void addMovie(const Movie& movie);
 
-    // Retrieve all users
-    const std::vector<User>& getUsers() const;
+    // Retrieve all users (returns copy for thread safety)
+    std::vector<User> getUsers() const;
 
-    // Retrieve all movies
-    const std::vector<Movie>& getMovies() const;
+    // Retrieve all movies (returns copy for thread safety)
+    std::vector<Movie> getMovies() const;
 
     // Find a user by ID
     User* findUserById(const std::string& userId);

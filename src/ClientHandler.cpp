@@ -29,18 +29,24 @@ void ClientHandler::handleClient() {
         commands["DELETE"] = new Delete();
         commands["help"] = new Help(commands);
 
-        // Create App instance
+        // App takes ownership and will delete commands in destructor
         App app(&menu, commands);
-
-        // Run the app for the client
+        
+        // Run until client disconnects (will throw exception)
         app.run();
 
-    } catch (const std::exception& e) {
+    } catch (const std::runtime_error& e) {
+        // Expected when client disconnects
+    } catch (...) {
+        // Any other error
     }
+    // App destructor automatically cleans up commands
 
+    // Close socket
     if (clientSocket >= 0) {
         close(clientSocket);
-        clientSocket = -1; 
-        
+        clientSocket = -1;
     }
 }
+
+

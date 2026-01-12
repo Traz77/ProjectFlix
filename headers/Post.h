@@ -19,6 +19,7 @@ public:
     Post(IStreamable* fileStream);
 
     Post();
+    ~Post() { delete add; }  // Clean up allocated memory
 
     // Create new user
     void execute(std::vector<std::string> args, std::ostream& response) override;

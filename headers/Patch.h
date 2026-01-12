@@ -1,3 +1,6 @@
+#ifndef PATCH_H
+#define PATCH_H
+
 #include "IServer.h"
 #include "ICommand.h"
 #include "User.h"
@@ -13,6 +16,7 @@ private:
 
 public:
     Patch();
+    ~Patch() { delete add; }  // Clean up allocated memory
 
     // Write to specific file if needed
     Patch(IStreamable* fileStream);
@@ -22,3 +26,5 @@ public:
 
     std::string toString() const override;
 };
+
+#endif

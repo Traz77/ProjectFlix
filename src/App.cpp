@@ -15,10 +15,6 @@ App::~App(){
 
 // Method to run the application
 void App::run() {
-    // Load all data and Users from fileStream
-    FileStream fileStream;
-    fileStream.initiate();
-
     while (true) {
         // Get the next command from the menu - a vector of strings
         std::vector<std::string> command = menu->nextCommand();

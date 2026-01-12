@@ -29,16 +29,16 @@ void Data::addMovie(const Movie& movie) {
     } 
 }
 
-// Retrieve all users
-const std::vector<User>& Data::getUsers() const {
+// Retrieve all users - returns COPY for thread safety
+std::vector<User> Data::getUsers() const {
     std::shared_lock<std::shared_timed_mutex> lock(dataMutex);
-    return users;
+    return users;  // Copy made while lock held
 }
 
-// Retrieve all movies
-const std::vector<Movie>& Data::getMovies() const {
+// Retrieve all movies - returns COPY for thread safety
+std::vector<Movie> Data::getMovies() const {
     std::shared_lock<std::shared_timed_mutex> lock(dataMutex);
-    return movies;
+    return movies;  // Copy made while lock held
 }
 
 // Find a user by ID

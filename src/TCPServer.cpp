@@ -1,5 +1,6 @@
 #include "TCPServer.h"
 #include "ThreadPoolManager.h"
+#include "Filestream.h"
 
 // Initialize the server with the given port
 TCPServer::TCPServer(int port) : port(port), serverSocket(-1), running(false) {}
@@ -25,14 +26,19 @@ void TCPServer::start() {
         throw std::runtime_error("Bind failed");
     }
 
-    // Start listening
-    if (listen(serverSocket, 5) < 0) {
+    // Start listening with backlog of 128 to handle high concurrent connection load
+    if (listen(serverSocket, 128) < 0) {
         close(serverSocket);
         throw std::runtime_error("Listen failed");
     }
 
     // Create ThreadPoolManager with 50 threads
     ThreadPoolManager threadManager(50);
+
+    // Initialize data from file ONCE at server startup
+    FileStream fileStream;
+    fileStream.initiate();
+    std::cout << "Data initialized from file." << std::endl;
 
     // Pass the thread manager to acceptClients
     acceptClients(serverSocket, &threadManager);

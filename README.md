@@ -159,13 +159,14 @@ docker-compose --env-file ./webServer/config/.env.local run --rm cpp_server ./ru
 ```
 
 **Run Performance Benchmark**
+*Persistent Connections*
 ```bash
-docker-compose --env-file ./webServer/config/.env.local exec cpp_server /usr/src/myapp/data/benchmark 1000000
+docker-compose --env-file ./webServer/config/.env.local exec cpp_server /usr/src/myapp/build/benchmark 10000 --persistent
 ```
 
-**Generate Coverage Report**
+*New Connection Per Request*
 ```bash
-docker-compose --env-file ./webServer/config/.env.local exec cpp_server bash -c "./runTests && lcov --capture --directory . --output-file coverage.info --ignore-errors inconsistent && lcov --extract coverage.info '/usr/src/myapp/src/*' --output-file src_coverage.info --ignore-errors inconsistent"
+docker-compose --env-file ./webServer/config/.env.local exec cpp_server /usr/src/myapp/build/benchmark 10000 --new-connection
 ```
 
 ### Administrative Access

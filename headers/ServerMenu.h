@@ -28,6 +28,7 @@ private:
     int clientSocket;
     bool isANumber(const std::string& str);
     void sendResponse(const std::string& response);
+    std::string inputBuffer;
 };
 
 #endif // SERVERMENU_H

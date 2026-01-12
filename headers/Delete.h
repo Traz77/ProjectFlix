@@ -1,3 +1,6 @@
+#ifndef DELETE_H
+#define DELETE_H
+
 #include "ICommand.h"
 #include "IServer.h"
 #include "IStreamable.h"
@@ -8,9 +11,11 @@
 class Delete : public ICommand {
 private:
     IStreamable* fileStream;
+    bool ownsFileStream;  // Track if we need to delete it
 
 public:
     Delete();
+    ~Delete();  // Destructor declared, defined in .cpp
     
     // If specific place to write to is needed 
     Delete(IStreamable* fileStream);
@@ -23,3 +28,5 @@ public:
     int checkValidCommand(std::vector<std::string> args);
 
 };
+
+#endif

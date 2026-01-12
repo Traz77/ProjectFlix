@@ -15,6 +15,7 @@ private:
 
 public:
     Get ();
+    ~Get() { delete recommend; }  // Clean up allocated memory
 
     void execute(std::vector<std::string> args, std::ostream& response) override;
 

@@ -3,11 +3,20 @@
 // Constructor
 Delete::Delete() {
     this->fileStream = new FileStream();
+    this->ownsFileStream = true;  // We own it, so we delete it
+}
+
+// Destructor
+Delete::~Delete() {
+    if (ownsFileStream && fileStream) {
+        delete fileStream;
+    }
 }
 
 // Constructor with different filestream for tests only 
 Delete::Delete(IStreamable* fileStream) {
     this->fileStream = fileStream;
+    this->ownsFileStream = false;  // We don't own it, so don't delete
 }
 
 void Delete::execute(std::vector<std::string> args, std::ostream& response) {

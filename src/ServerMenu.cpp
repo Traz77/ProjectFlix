@@ -4,39 +4,47 @@ ServerMenu::ServerMenu(int clientSocket) : clientSocket(clientSocket) {}
 
 //A method that gets the next command from the client and checks if it is valid syntax wise
 std::vector<std::string> ServerMenu::nextCommand() {
-    //A buffer to store the data received from the client
-    char buffer[4096] = {0};
-    //Read the data from the client
-    int bytesRead = read(clientSocket, buffer, sizeof(buffer));
-    //If the client disconnected or there was an error in receiving data, throw an exception
-    if (bytesRead <= 0) {
-        throw std::runtime_error("Client disconnected or error in receiving data.");
+    // Check if we already have a complete command in the buffer
+    size_t newlinePos = inputBuffer.find('\n');
+    
+    // If no newline, read more data until we find one
+    while (newlinePos == std::string::npos) {
+        char buffer[4096] = {0};
+        int bytesRead = read(clientSocket, buffer, sizeof(buffer));
+        
+        if (bytesRead <= 0) {
+            // If buffer still has data but connection closed, we might want to process it
+            // But strict protocol requires \n, so we'll throw error
+            if (!inputBuffer.empty()) {
+                // Optional: Log partial data?
+            }
+            throw std::runtime_error("Client disconnected or error in receiving data.");
+        }
+        
+        inputBuffer.append(buffer, bytesRead);
+        newlinePos = inputBuffer.find('\n');
     }
     
-    //Check if the data received contains any characters other than alphanumeric characters, spaces, and newlines
-    buffer[bytesRead] = '\0';
+    // Extract the command line
+    std::string line = inputBuffer.substr(0, newlinePos);
+    // Remove the command line from buffer (+1 for newline)
+    inputBuffer.erase(0, newlinePos + 1);
     
-    bool onlyWhitespace = true;
-    for(int i = 0; i < bytesRead; i++) {
-        if(buffer[i] != '\n' && buffer[i] != '\r' && buffer[i] != ' ' && buffer[i] != '\t') {
-            onlyWhitespace = false;
-            break;
-        }
+    // Remove \r if present (e.g. from Windows clients)
+    if (!line.empty() && line.back() == '\r') {
+        line.pop_back();
     }
-
-    //Parse the data received into a vector of strings
-    std::stringstream ss(buffer);
-    std::string content = ss.str();
-    for (char c : content) {
-        if (c == '\n' || c == '\r') {
-            continue;
-        }
+    
+    // Validation: Check for non-alphanumeric chars (allowing space)
+    for (char c : line) {
         if (!isalnum(c) && c != ' ') {
             displayMessage("400 Bad Request");
             return {};
         }
     }
 
+    // Parse into tokens
+    std::stringstream ss(line);
     std::vector<std::string> request;
     std::string token;
 
@@ -87,6 +95,8 @@ std::vector<std::string> ServerMenu::nextCommand() {
 
 //A method that displays an error message to the client
 void ServerMenu::displayMessage(const std::string& message) {
+    if (message.find("400") != std::string::npos) {
+    }
     sendResponse(message);
 }
 
