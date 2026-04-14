@@ -13,11 +13,6 @@ std::vector<std::string> ServerMenu::nextCommand() {
         int bytesRead = read(clientSocket, buffer, sizeof(buffer));
         
         if (bytesRead <= 0) {
-            // If buffer still has data but connection closed, we might want to process it
-            // But strict protocol requires \n, so we'll throw error
-            if (!inputBuffer.empty()) {
-                // Optional: Log partial data?
-            }
             throw std::runtime_error("Client disconnected or error in receiving data.");
         }
         
@@ -37,8 +32,8 @@ std::vector<std::string> ServerMenu::nextCommand() {
     
     // Validation: Check for non-alphanumeric chars (allowing space)
     for (char c : line) {
-        if (!isalnum(c) && c != ' ') {
-            displayMessage("400 Bad Request");
+        if (!isalnum(c) && c != ' ' && c != '\r') {
+            displayMessage("400 Bad Request (INVALID CHAR: " + std::string(1, c) + ")");
             return {};
         }
     }
@@ -62,7 +57,7 @@ std::vector<std::string> ServerMenu::nextCommand() {
     //Check if from the second element onwards, the request contains only numbers
     for (int i = 1; i < request.size(); i++) {
         if (!isANumber(request[i])) {
-            displayMessage("400 Bad Request");
+            displayMessage("400 Bad Request (NOT A NUMBER: " + request[i] + ")");
             return {};
         }
     }
@@ -105,7 +100,6 @@ void ServerMenu::sendResponse(const std::string& response) {
     std::string message = response;
     
     // Ensure the message ends with a newline character
-    // This is CRITICAL for Node.js to parse the response correctly
     if (message.empty() || message.back() != '\n') {
         message += '\n';
     }

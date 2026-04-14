@@ -1,6 +1,7 @@
 #include "TCPServer.h"
 #include "ThreadPoolManager.h"
 #include "Filestream.h"
+#include <netinet/tcp.h>
 
 // Initialize the server with the given port
 TCPServer::TCPServer(int port) : port(port), serverSocket(-1), running(false) {}
@@ -14,6 +15,9 @@ void TCPServer::start() {
         throw std::runtime_error("Failed to create socket");
     }
 
+    int opt = 1;
+    setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+
     // Set up server IPV4 and Accept all clients
     sockaddr_in serverAddr{};
     serverAddr.sin_family = AF_INET;
@@ -26,8 +30,8 @@ void TCPServer::start() {
         throw std::runtime_error("Bind failed");
     }
 
-    // Start listening with backlog of 128 to handle high concurrent connection load
-    if (listen(serverSocket, 128) < 0) {
+    // Start listening with large backlog to handle burst concurrent connections
+    if (listen(serverSocket, SOMAXCONN) < 0) {
         close(serverSocket);
         throw std::runtime_error("Listen failed");
     }
@@ -58,6 +62,10 @@ void TCPServer::acceptClients(int serverSocket, IThreadManager* threadManager) {
             }
             continue;
         }
+
+        // Disable Nagle's algorithm for low-latency small responses
+        int flag = 1;
+        setsockopt(clientSocket, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof(flag));
 
         // Create a client handler for the client
         ClientHandler* clientHandler = new ClientHandler(clientSocket, threadManager);

@@ -1,8 +1,35 @@
 #include "Filestream.h"
+#include <unordered_map>
 
-FileStream::FileStream(const std::string& file = "SaveData") : filename(file) {}
+static std::mutex g_fileMutex;
+static std::ofstream g_savedFile;
+static std::string g_filename;
 
-// Internal read implementation (no lock)
+namespace {
+void ensure_open_stream_for_file(const std::string& targetFilename) {
+    bool fileVisible = false;
+    {
+        std::ifstream probe(targetFilename);
+        fileVisible = probe.good();
+    }
+
+    if (g_savedFile.is_open() && (g_filename != targetFilename || !fileVisible)) {
+        g_savedFile.flush();
+        g_savedFile.close();
+    }
+
+    if (!g_savedFile.is_open()) {
+        g_filename = targetFilename;
+        g_savedFile.open(g_filename, std::ios::app);
+    }
+}
+}
+
+FileStream::FileStream(const std::string& file) : filename(file) {
+    std::lock_guard<std::mutex> lock(g_fileMutex);
+    ensure_open_stream_for_file(filename);
+}
+
 std::vector<User> FileStream::read_impl() {
     std::ifstream inside(filename);
     if (!inside) {
@@ -10,103 +37,98 @@ std::vector<User> FileStream::read_impl() {
     }
     std::vector<User> allUsers;
     std::string line;
-    while(std::getline(inside, line)) {
-        // Skip empty lines or lines with only whitespace
-        if (line.empty() || line.find_first_not_of(" \t\n\r") == std::string::npos) {
-            continue;
-        }
+    auto readCleanLine = [&inside, &line]() -> bool {
+        if (!std::getline(inside, line)) return false;
+        if (!line.empty() && line.back() == '\r') line.pop_back();
+        return true;
+    };
+    
+    while(readCleanLine()) {
+        if (line.empty() || line.find_first_not_of(" \t\n") == std::string::npos) continue;
         std::string userId = line;
-        std::getline(inside, line);
-        int numOfMoviesToRead = std::stoi(line);
+        if (!readCleanLine()) break;
+        int numOfMoviesToRead = 0;
+        try { numOfMoviesToRead = std::stoi(line); } catch(...) { break; }
         std::vector<Movie> movies;
         for (int i = 0; i < numOfMoviesToRead; i++) {
-            std::getline(inside, line);
-            std::string movieId = line;
-            movies.push_back(Movie(movieId, {}));
+            if (!readCleanLine()) break;
+            if (line.empty() || line.find_first_not_of(" \t\n") == std::string::npos) continue;
+            movies.push_back(Movie(line, {}));
         }
         allUsers.push_back(User(userId, movies));
     }
-    return allUsers;
-}
+    // Keep first-seen user order but retain only the latest snapshot per user.
+    std::vector<User> latestUsers;
+    latestUsers.reserve(allUsers.size());
+    std::unordered_map<std::string, std::size_t> userIndex;
 
-// Internal update implementation (no lock)
-void FileStream::updateMovies_impl(const User& updatedUserWithUpdatedMovies, std::vector<Movie> updatedMovies) {
-    std::vector<User> exportUsers = read_impl();
-    
-    std::ofstream saved(filename, std::ios::trunc);
-    
-    for (std::vector<User>::size_type i = 0; i < exportUsers.size(); i++) {
-        if (updatedUserWithUpdatedMovies.getUserID() == exportUsers[i].getUserID()) {
-            saved << updatedUserWithUpdatedMovies.getUserID() << "\n";
-            saved << updatedMovies.size() << "\n";
-            for (std::vector<Movie>::size_type j = 0; j < updatedMovies.size(); j++) {
-                saved << updatedMovies[j].getMovieId() << "\n";
-            }
+    for (const User& user : allUsers) {
+        auto it = userIndex.find(user.getUserID());
+        if (it == userIndex.end()) {
+            userIndex[user.getUserID()] = latestUsers.size();
+            latestUsers.push_back(user);
         } else {
-            saved << exportUsers[i].getUserID() << "\n";
-            const std::vector<Movie>& userMovies = exportUsers[i].getMoviesWatched();
-            saved << userMovies.size() << "\n";
-            for (const Movie& movie : userMovies) {
-                saved << movie.getMovieId() << "\n";
-            }
+            latestUsers[it->second] = user;
         }
     }
-    saved.close();
+
+    return latestUsers;
+}
+
+void FileStream::updateMovies_impl(const User& updatedUserWithUpdatedMovies, std::vector<Movie> updatedMovies) {
+    if (g_savedFile.is_open()) {
+        g_savedFile << updatedUserWithUpdatedMovies.getUserID() << "\n"
+                    << updatedMovies.size() << "\n";
+        for (const Movie& movie : updatedMovies) {
+            g_savedFile << movie.getMovieId() << "\n";
+        }
+    }
 }
 
 void FileStream::write(const User& user) { 
-    std::unique_lock<std::shared_timed_mutex> lock(fileMutex);
-    std::vector<User> existingUsers = read_impl();
-    for (const User& existingUser : existingUsers) {
-        if (existingUser.getUserID() == user.getUserID()) {
-            updateMovies_impl(user, user.getMoviesWatched());
-            return;
-        }
-    }
-    std::ofstream saved (filename, std::ios::app);
-    saved << user.getUserID() << "\n";
-    const std::vector<Movie>& userMovie = user.getMoviesWatched();
-    saved << userMovie.size() << "\n";
-    for (std::vector<Movie>::size_type i = 0; i < userMovie.size(); i++) {
-        saved << userMovie[i].getMovieId() << "\n";
-    }
-    saved.close();
+    std::lock_guard<std::mutex> lock(g_fileMutex);
+    ensure_open_stream_for_file(filename);
+    updateMovies_impl(user, user.getMoviesWatched());
 }
 
 std::vector<User> FileStream::read() {
-    std::shared_lock<std::shared_timed_mutex> lock(fileMutex);
+    std::lock_guard<std::mutex> lock(g_fileMutex);
+    ensure_open_stream_for_file(filename);
+    if (g_savedFile.is_open()) g_savedFile.flush();
     return read_impl();
 }
 
 void FileStream::updateMovies(const User& updatedUserWithUpdatedMovies, std::vector<Movie> updatedMovies) {
-    std::unique_lock<std::shared_timed_mutex> lock(fileMutex);
+    std::lock_guard<std::mutex> lock(g_fileMutex);
+    ensure_open_stream_for_file(filename);
     updateMovies_impl(updatedUserWithUpdatedMovies, updatedMovies);
 }
 
 void FileStream::initiate() { 
-    std::unique_lock<std::shared_timed_mutex> lock(fileMutex);
+    std::lock_guard<std::mutex> lock(g_fileMutex);
+    ensure_open_stream_for_file(filename);
+    if (g_savedFile.is_open()) g_savedFile.flush();
+
     std::vector<User> usersFromFile = read_impl();
-    for (const User& user : usersFromFile) {
-        bool userExists = false;
-        Data& data = Data::getInstance();
-        User* existingUser = data.findUserById(user.getUserID());
-        if (existingUser != nullptr) {
-            userExists = true;
+
+    Data& data = Data::getInstance();
+
+    for (const User& savedUser : usersFromFile) {
+        const std::string& userId = savedUser.getUserID();
+        User* user = data.findUserById(userId);
+        if (!user) {
+            data.addUser(User(userId, {}));
+            user = data.findUserById(userId);
         }
-        if (!userExists) {
-            std::vector<std::string> userCommand = {user.getUserID()}; 
-            const std::vector<Movie>& userMovies = user.getMoviesWatched();
-            for (const Movie& movie : userMovies) {
-                userCommand.push_back(movie.getMovieId()); 
+
+        for (const Movie& m : savedUser.getMoviesWatched()) {
+            Movie* movie = data.findMovieById(m.getMovieId());
+            if (!movie) {
+                data.addMovie(Movie(m.getMovieId(), {}));
+                movie = data.findMovieById(m.getMovieId());
             }
-            Add addCommand;
-            std::stringstream response;
-            addCommand.execute(userCommand, response);
+            user->addMovie(*movie);
+            movie->addUser(*user);
         }
     }   
 }
-
-
-
-
-            

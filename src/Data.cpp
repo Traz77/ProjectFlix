@@ -11,54 +11,46 @@ void Data::clear() {
     std::unique_lock<std::shared_timed_mutex> lock(dataMutex);
     movies.clear();
     users.clear();
+    userMap.clear();
+    movieMap.clear();
 }
 
 // Add a user
 void Data::addUser(const User& user) {
-    std::unique_lock<std::shared_timed_mutex> lock(dataMutex);
-    if (std::find(users.begin(), users.end(), user) == users.end()) {
+    if (userMap.find(user.getUserID()) == userMap.end()) {
         users.push_back(user);
+        userMap[user.getUserID()] = &users.back();
     }
 }
 
 // Add a movie
 void Data::addMovie(const Movie& movie) {
-    std::unique_lock<std::shared_timed_mutex> lock(dataMutex);
-    if (std::find(movies.begin(), movies.end(), movie) == movies.end()) {
+    if (movieMap.find(movie.getMovieId()) == movieMap.end()) {
         movies.push_back(movie);
+        movieMap[movie.getMovieId()] = &movies.back();
     } 
 }
 
 // Retrieve all users - returns COPY for thread safety
 std::vector<User> Data::getUsers() const {
     std::shared_lock<std::shared_timed_mutex> lock(dataMutex);
-    return users;  // Copy made while lock held
+    return std::vector<User>(users.begin(), users.end());  // Copy made while lock held
 }
 
 // Retrieve all movies - returns COPY for thread safety
 std::vector<Movie> Data::getMovies() const {
     std::shared_lock<std::shared_timed_mutex> lock(dataMutex);
-    return movies;  // Copy made while lock held
+    return std::vector<Movie>(movies.begin(), movies.end());  // Copy made while lock held
 }
 
 // Find a user by ID
 User* Data::findUserById(const std::string& userId) {
-    std::shared_lock<std::shared_timed_mutex> lock(dataMutex);
-    for (auto& user : users) {
-        if (user.getUserID() == userId) {
-            return &user;
-        }
-    }
-    return nullptr; // User not found
+    auto it = userMap.find(userId);
+    return it != userMap.end() ? it->second : nullptr;
 }
 
 // Find a movie by ID
 Movie* Data::findMovieById(const std::string& movieId) {
-    std::shared_lock<std::shared_timed_mutex> lock(dataMutex);
-    for (auto& movie : movies) {
-        if (movie.getMovieId() == movieId) {
-            return &movie;
-        }
-    }
-    return nullptr; // Movie not found
+    auto it = movieMap.find(movieId);
+    return it != movieMap.end() ? it->second : nullptr;
 };

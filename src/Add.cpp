@@ -8,7 +8,6 @@ Add::Add() {
     this->fileStream = new FileStream();
 }
 
-// Method to execute the Add command
 void Add::execute(std::vector<std::string> commands, std::ostream& response) {
     // Check if the command is valid
     if (commands.size() == 0 || commands.empty()) {
@@ -26,6 +25,9 @@ void Add::execute(std::vector<std::string> commands, std::ostream& response) {
 
     // Find the user in the database - the data object is singleton
     Data& data = Data::getInstance();
+    
+    std::lock_guard<std::recursive_mutex> writeLock(data.getOpsMutex());
+    
     User* user = data.findUserById(userId);
 
 

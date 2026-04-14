@@ -40,7 +40,8 @@ void User::setMoviesWatched( const std::vector<Movie>& newMoviesWatched) {
 // Add movie to watch
 void User::addMovie (Movie& newMovie){
     if (std::find(moviesWatched.begin(),moviesWatched.end(), newMovie) == moviesWatched.end()){
-        moviesWatched.push_back(newMovie);
+        Movie filteredMovie(newMovie.getMovieId(), std::vector<User>());
+        moviesWatched.push_back(filteredMovie);
     } 
 }
         

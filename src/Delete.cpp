@@ -25,6 +25,9 @@ void Delete::execute(std::vector<std::string> args, std::ostream& response) {
 
     // Extract the user ID and find it in Data 
     std::string userId = args[0];
+    
+    std::lock_guard<std::recursive_mutex> writeLock(data.getOpsMutex());
+    
     User* user = data.findUserById(userId);
 
     // Check command is valid 

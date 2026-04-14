@@ -19,7 +19,7 @@ Movie::Movie(const std::string& id, const std::vector<User>& usersWatched)
 void Movie::removeUserFromList(User& userToDelete) {
     // Find the user and remove it 
     std::vector<User>& users = getUsersWatchedMutable();
-    for (int i = 0; users.size(); i++) {
+    for (int i = 0; i < users.size(); i++) {
         if (users[i] == userToDelete) {
             users.erase(users.begin() + i);
             break;
@@ -50,7 +50,8 @@ void Movie::setUsersWatched ( const std::vector<User>& newUsersWatched) {
 // Add user watching
 void Movie::addUser (User& newUser){
     if (std::find(usersWatched.begin(),usersWatched.end(), newUser) == usersWatched.end()){
-        usersWatched.push_back(newUser);
+        User filteredUser(newUser.getUserID(), std::vector<Movie>());
+        usersWatched.push_back(filteredUser);
     }   
 }
 

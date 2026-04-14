@@ -8,16 +8,21 @@
 #include <vector>
 #include <string> 
 #include <algorithm> 
-#include <iostream>
+#include <list>
+#include <unordered_map>
 
 class Data {
 private:
-    std::vector<User> users;   
-    std::vector<Movie> movies;  
+    std::list<User> users;
+    std::list<Movie> movies;
+    std::unordered_map<std::string, User*> userMap;
+    std::unordered_map<std::string, Movie*> movieMap;
     mutable std::shared_timed_mutex dataMutex; // Mutex to protect the data
-    Data() {}                  
+    std::recursive_mutex opsMutex;
+    Data() {}
 
 public:
+    std::recursive_mutex& getOpsMutex() { return opsMutex; }
     // Get the singelton instance
     static Data& getInstance();
 
@@ -36,6 +41,8 @@ public:
 
     // Retrieve all users (returns copy for thread safety)
     std::vector<User> getUsers() const;
+    const std::list<User>& getUsersRef() const { return users; }
+    std::shared_timed_mutex& getMutex() const { return dataMutex; }
 
     // Retrieve all movies (returns copy for thread safety)
     std::vector<Movie> getMovies() const;

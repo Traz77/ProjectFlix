@@ -1,141 +1,97 @@
 # ProjectFlix
 
-A cross-platform movie streaming platform built with modern technologies, featuring intelligent recommendation systems and multi-device support.
+ProjectFlix is a web-focused movie streaming platform built from three cooperating services: a React frontend, a Node.js API with MongoDB, and a C++ recommendation engine.
 
 ## Architecture
 
-ProjectFlix implements a multi-tier architecture combining three core technologies:
+ProjectFlix uses a multi-tier architecture with clear service boundaries.
 
-**C++ Recommendation Engine**  
-High-performance backend service managing user profiles, viewing history, and personalized content recommendations through advanced similarity algorithms.
+**C++ Recommendation Engine**
+- High-performance TCP service for recommendation logic.
+- Manages recommendation queries and similarity calculations.
 
-**Node.js API Server**  
-RESTful service layer implementing MVC architecture patterns, handling data persistence through MongoDB, and serving as the communication bridge between clients and the recommendation engine.
+**Node.js API Server**
+- REST API layer built with Express (MVC-style organization).
+- Handles authentication, media metadata, and persistence in MongoDB.
+- Communicates with the C++ engine for recommendation flows.
 
-**Multi-Platform Clients**  
-Web application built with React and native Android application providing consistent user experiences across desktop and mobile platforms.
+**React Web Client**
+- Browser-based UI for authentication, browsing, and playback.
+- Consumes API endpoints exposed by the Node.js server.
 
-Additional documentation and screenshots available in the [Wiki](wiki/) directory.
+Additional documentation and screenshots are available in [wiki/](wiki/).
 
 ## Project Structure
-```
+
+```text
 ProjectFlix/
-├── client/                              # React web application 
-│   ├── src/                             
-│   │   ├── components/                  
-│   │   ├── services/   
-│   │   └── ...            
-├── webServer/                           # Node.js backend server (MVC)
-│   ├── controllers/                     
-│   │   ├── UserController.js            # User operations
-│   │   ├── MovieController.js           # Movie management
-│   │   ├── RecommendationController.js  # C++ engine integration
-│   │   └── ...                          
-│   ├── models/                          # Database schemas
-│   │   ├── UserModel.js                 
-│   │   ├── MovieModel.js                
-│   │   └── ...                          
-│   ├── routes/                          # API endpoints
-│   │   ├── UserRoutes.js                
-│   │   ├── MovieRoute.js                
-│   │   └── ...                          
-│   ├── middlewares/                     # Express middleware
-│   │   ├── auth.js                      # Authentication middleware
-│   │   └── upload.js                    # File upload handling
-│   ├── services/                       
-│   │   ├── UserServices.js              
-│   │   ├── MovieService.js              
-│   │   ├── RecommendationService.js     # C++ engine integration
-│   │   └── ...                          
-│   ├── config/                          # Configuration files
-│   │   └── .env.local                   # Environment variables (create this - read instructions below)
-│   └── app.js                           # Express application
-├── src/                                 # C++ recommendation engine
-│   ├── main.cpp                         
-│   ├── MovieRecommender.cpp             # Recommendation algorithm
-│   ├── TCPServer.cpp                    # TCP server entry point
-│   ├── ThreadPoolManager.cpp            
-│   └── ...                              
-├── headers/                             # C++ header files
-├── tests/                               # C++ unit tests
-│   ├── UserManagerTest.cpp
-│   ├── RecommendationTest.cpp
-│   ├── ServerMenuTest.cpp
-│   └── ...                              # Other test files
-├── wiki/                                # Project documentation
-├── docker-compose.yml                   # Multi-container orchestration
-├── Dockerfile.client                    # React frontend container
-├── CMakeLists.txt                       # C++ build configuration
-└── README.md                            # Project documentation
+├── client/                     # React web application
+│   ├── public/
+│   └── src/
+│       ├── components/
+│       ├── services/
+│       └── ...
+├── webServer/                  # Node.js backend (controllers/models/routes/services)
+│   ├── controllers/
+│   ├── middlewares/
+│   ├── models/
+│   ├── routes/
+│   ├── services/
+│   ├── scripts/
+│   └── app.js
+├── src/                        # C++ engine implementation
+├── headers/                    # C++ headers
+├── tests/                      # C++ tests and benchmark
+├── data/                       # Runtime data
+├── wiki/                       # Project docs and screenshots
+├── docker-compose.yml          # Multi-service orchestration
+├── Dockerfile.client           # React container build
+├── CMakeLists.txt              # C++ build configuration
+└── README.md
 ```
 
-### Technology Stack
+## Technology Stack
 
-- **Backend Services**: Node.js API server with MongoDB persistence
-- **Recommendation Engine**: C++ service for content analysis and user profiling
-- **Web Client**: React-based frontend application
-- **Mobile Client**: Native Android application
-- **Infrastructure**: Docker containerization and orchestration
-- **Database**: MongoDB for data storage and management
+- Web client: React
+- API server: Node.js + Express
+- Recommendation engine: C++ (TCP server)
+- Database: MongoDB
+- Infrastructure: Docker Compose
 
-### System Components
+## Prerequisites
 
-**API Layer**
-- RESTful endpoints for client communication
-- JWT-based authentication and authorization
-- File upload and media handling
-- Database abstraction and CRUD operations
+- Docker Desktop (Docker + Compose)
+- Node.js (used for local helper commands like JWT generation)
 
-**Recommendation Service**
-- User behavior analysis and pattern recognition
-- Content similarity algorithms
-- Personalized recommendation generation
-- Real-time preference learning
+## Configuration
 
-**Client Applications**
-- Responsive web interface with modern UI components
-- Native Android application with platform-specific optimizations
-- Cross-platform state management and API integration
+1. Create the configuration directory:
 
-## Installation and Setup
-
-### Prerequisites
-- Docker and Docker Compose
-- Git
-- Android Studio (for mobile development)
-
-### Initial Setup
-
-**1. Repository Setup**
-```bash
-git clone https://github.com/omrinahum/ProjectFlix.git
-cd ProjectFlix
-```
-
-**2. Environment Configuration**
-Create the configuration directory and environment file:
 ```bash
 mkdir -p webServer/config
 ```
 
-Generate a secure JWT secret:
+2. Generate a secure JWT secret:
+
 ```bash
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 ```
 
-Create `webServer/config/.env.local` with the following configuration:
+3. Create webServer/config/.env.local:
+
 ```env
 PORT=3000
 REACT_APP_API_URL=http://localhost:3000/
 RECOMMENDATION_PORT=5555
 FRONTEND_PORT=3001
 CONNECTION_STRING=mongodb://host.docker.internal:27017
-JWT_SECRET=your_jwt_secret_here
+JWT_SECRET=your_generated_secret
 ```
 
-### Deployment
+## Build and Run
 
-**Build Application**
+Build:
+
 ```bash
 # Windows PowerShell
 docker-compose --env-file .\webServer\config\.env.local build
@@ -144,7 +100,8 @@ docker-compose --env-file .\webServer\config\.env.local build
 docker-compose --env-file ./webServer/config/.env.local build
 ```
 
-**Start Services**
+Start services:
+
 ```bash
 # Windows PowerShell
 docker-compose --env-file .\webServer\config\.env.local up -d
@@ -152,49 +109,50 @@ docker-compose --env-file .\webServer\config\.env.local up -d
 # Unix/Linux/macOS
 docker-compose --env-file ./webServer/config/.env.local up -d
 ```
-### Testing
-**Run C++ Backend Tests**
+
+## Testing and Benchmark
+
+Run C++ tests:
+
 ```bash
 docker-compose --env-file ./webServer/config/.env.local run --rm cpp_server ./runTests
 ```
 
-**Run Performance Benchmark**
-*Persistent Connections*
+Run performance benchmark (persistent connections, mixed GET/POST/PATCH loads, 50 threads internally balanced):
+
 ```bash
-docker-compose --env-file ./webServer/config/.env.local exec cpp_server /usr/src/myapp/build/benchmark 10000 --persistent
+docker-compose --env-file ./webServer/config/.env.local exec cpp_server /usr/src/myapp/build/benchmark 10000
 ```
 
-*New Connection Per Request*
-```bash
-docker-compose --env-file ./webServer/config/.env.local exec cpp_server /usr/src/myapp/build/benchmark 10000 --new-connection
-```
+- Representative run (10000 requests, Docker Compose stack running):
+	- Time taken: 6.41 seconds
+	- Successful requests: 9800
+	- Failed requests: 200
+	- Throughput: 1529.61 req/sec
+	- Latency: min 0.04 ms, avg 31.66 ms, p50 28.15 ms, p95 56.33 ms, p99 103.43 ms, max 226.37 ms
+	- Response types: 200=7654, 201=0, 204=1938, 400=0, 404=208, 500=0
 
-### Administrative Access
 
-To grant administrative privileges:
+## Application Access
+
+- Web UI: http://localhost:3001/login
+- API: http://localhost:3000
+- MongoDB: localhost:27017
+
+Use configured environment ports if you changed defaults.
+
+## Administrative Access
+
+Open Mongo shell:
+
 ```bash
 docker exec -it mongo mongosh
 ```
 
-In the MongoDB shell:
+Promote a user to admin:
+
 ```javascript
 db.users.updateOne({ email: "YOUR_EMAIL" }, { $set: { role: "admin" } })
 ```
 
-## Application Access
 
-**Web Application**: http://localhost:3001/login  
-Replace port number with your configured FRONTEND_PORT value.
-
-## Android Development
-
-### Setup Instructions
-1. Open Android Studio
-2. Select "New Project from Version Control"
-3. Enter repository URL: https://github.com/omrinahum/ProjectFlix.git
-4. Navigate to File > Open and select the `android/` directory
-5. Sync project with Gradle files
-6. Configure API endpoint in `android/res/values/strings.xml` (default: http://10.0.2.2:3000/api/)
-7. Build and run the application
-
-**Note**: Ensure the Android API URL matches your backend server port configuration.

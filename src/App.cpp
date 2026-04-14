@@ -35,8 +35,10 @@ void App::run() {
 
             menu->displayMessage(response.str());
             
+        } catch (const std::exception& e) {
+            menu->displayMessage(std::string("500 Exception: ") + e.what());
         } catch (...) {
-            menu->displayMessage("400 Bad Request");
+            menu->displayMessage("500 Exception");
         }
     }
 }

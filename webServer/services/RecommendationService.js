@@ -125,7 +125,10 @@ class RecommendationService {
                 }
 
                 // Handle status codes
-                if (line.startsWith('404') || line.startsWith('400')) {
+                if (line.startsWith('500')) {
+                    const { resolve } = this.requestsQueue.shift();
+                    resolve({ success: false, message: line });
+                } else if (line.startsWith('404') || line.startsWith('400')) {
                     const { resolve } = this.requestsQueue.shift();
                     resolve({ success: false, message: line });
                 } else if (line.startsWith('201') || line.startsWith('204')) {

@@ -5,6 +5,7 @@ FROM gcc:latest
 RUN apt-get update && apt-get install -y \
     cmake \
     build-essential \
+    libgtest-dev \
     lcov \
     && rm -rf /var/lib/apt/lists/*
 
