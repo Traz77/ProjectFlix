@@ -118,19 +118,19 @@ Run C++ tests:
 docker-compose --env-file ./webServer/config/.env.local run --rm cpp_server ./runTests
 ```
 
-Run performance benchmark (persistent connections, mixed GET/POST/PATCH loads, 50 threads internally balanced):
+Run performance benchmark (persistent connections, mixed GET/POST/PATCH loads, 50 benchmark client threads):
 
 ```bash
 docker-compose --env-file ./webServer/config/.env.local exec cpp_server /usr/src/myapp/build/benchmark 10000
 ```
 
-- Representative run (10000 requests, Docker Compose stack running):
-	- Time taken: 6.41 seconds
-	- Successful requests: 9800
-	- Failed requests: 200
-	- Throughput: 1529.61 req/sec
-	- Latency: min 0.04 ms, avg 31.66 ms, p50 28.15 ms, p95 56.33 ms, p99 103.43 ms, max 226.37 ms
-	- Response types: 200=7654, 201=0, 204=1938, 400=0, 404=208, 500=0
+- Representative run (10000 requests):
+	- Time taken: 2.43 seconds
+	- Successful requests: 10000
+	- Failed requests: 0
+	- Throughput: 4118.81 req/sec
+	- Latency: min 0.01 ms, avg 11.70 ms, p50 9.48 ms, p95 36.08 ms, p99 53.86 ms, max 163.99 ms
+	- Response types: 200=7807, 201=0, 204=1980, 400=0, 404=213, 500=0
 
 
 ## Application Access

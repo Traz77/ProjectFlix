@@ -36,8 +36,8 @@ void TCPServer::start() {
         throw std::runtime_error("Listen failed");
     }
 
-    // Create ThreadPoolManager with 50 threads
-    ThreadPoolManager threadManager(50);
+    // Create ThreadPoolManager with 64 threads
+    ThreadPoolManager threadManager(64);
 
     // Initialize data from file ONCE at server startup
     FileStream fileStream;
